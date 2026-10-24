@@ -1,0 +1,66 @@
+{
+  "journal": [],
+  "codex": [
+    {
+      "cat": "Cercle intime",
+      "color": "#A4AE1C",
+      "eye": "",
+      "img": "https://i.imgur.com/qqIYWTO.jpeg",
+      "link": "",
+      "linkLabel": "",
+      "lite": false,
+      "name": "Eleanor Whitaker",
+      "obj": [],
+      "order": 1,
+      "pos": "",
+      "role": "",
+      "secs": [],
+      "sub": "",
+      "tag": "",
+      "tiles": [],
+      "id": "ellie"
+    },
+    {
+      "cat": "Cercle intime",
+      "color": "#e05050",
+      "eye": "",
+      "img": "https://i.imgur.com/5dRykrW.png",
+      "link": "",
+      "linkLabel": "",
+      "lite": false,
+      "name": "Julian November",
+      "obj": [],
+      "order": 2,
+      "pos": "",
+      "role": "",
+      "secs": [],
+      "sub": "",
+      "tag": "",
+      "tiles": [],
+      "id": "julian"
+    },
+    {
+      "cat": "Cercle intime",
+      "color": "#1298b0",
+      "eye": "",
+      "img": "https://2img.net/i.imgur.com/XLF0fkE.png",
+      "link": "",
+      "linkLabel": "",
+      "lite": false,
+      "name": "Isaac Moreland",
+      "obj": [],
+      "order": 3,
+      "pos": "",
+      "role": "",
+      "secs": [],
+      "sub": "",
+      "tag": "",
+      "tiles": [],
+      "id": "isaac"
+    }
+  ],
+  "settings": {
+    "banSam": "https://i.imgur.com/9PLgXZi.jpeg",
+    "banBart": "https://i.imgur.com/EI8Frdk.jpeg"
+  }
+}
