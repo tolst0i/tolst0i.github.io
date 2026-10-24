@@ -82,7 +82,7 @@
         }
       ],
       "sub": "Responsable sécurité interne",
-      "tag": "Judgement",
+      "tag": "The Hermit",
       "tiles": [
         {
           "a": "Ex-flic",
@@ -134,5 +134,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792857165417
+  "rev": 1792862250537
 }
