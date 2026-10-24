@@ -5,7 +5,7 @@
       "id": "ellie",
       "cat": "Cercle intime",
       "color": "#A4AE1C",
-      "eye": "",
+      "eye": "DOSSIER 01",
       "img": "https://i.imgur.com/qqIYWTO.jpeg",
       "link": "",
       "linkLabel": "",
@@ -20,16 +20,16 @@
       "role": "Cheffe de Cabinet",
       "secs": [
         {
-          "h": "Background",
+          "h": "Le Dossier",
           "t": "Ex-post-doc à l'université de Middletown, elle détient un doctorat en sciences politiques portant notamment sur le fonctionnement des institutions publiques de Triomphe, leur légitimité institutionnelle, les rapports entre intérêts économiques et autorité politique, ainsi que les mécanismes de gouvernance territoriale. En parallèle, elle est également extrêmement engagée dans la vie civique et associative du district où elle acquit une certaine réputation pour sa capacité à fédérer des intérêts bien souvent divergents. \n\n"
         },
         {
-          "h": "Actuellement",
+          "h": "Le Récit (Aujourd'hui)",
           "t": "Désormais cheffe de cabinet de Bartholomew « Bart » Hargreave III, candidat à la préfecture de Middletown, elle se retrouve plongée dans l'univers nouveau et intense de l'intrigue politico-corporate. Reste à savoir si son expérience du terrain et sa connaissance des institutions feront d'elle un élément déterminant de la campagne, ou si cette nouvelle réalité politique, bien éloignée des amphis et des associations de voisins, finira par avoir raison de ses convictions."
         }
       ],
       "sub": "Cheffe de cabinet de campagne",
-      "tag": "Campagne Hargreave",
+      "tag": "The Fool",
       "tiles": [
         {
           "a": "Ex-Universitaire",
@@ -38,38 +38,56 @@
       ]
     },
     {
+      "id": "isaac",
+      "cat": "Cercle intime",
+      "color": "#1298b0",
+      "eye": "DOSSIER 02",
+      "img": "https://2img.net/i.imgur.com/XLF0fkE.png",
+      "link": "",
+      "linkLabel": "",
+      "lite": false,
+      "name": "Isaac Moreland",
+      "obj": [
+        " Faire gagner Hargreave aux élections prefectorales.",
+        "S'assurer de la sécurité et sûretéde la campagne Hargreave.",
+        "Se venger de l'institution qui l'a foutu au placard."
+      ],
+      "order": 2,
+      "pos": "",
+      "role": "Responsable Sécurité",
+      "secs": [
+        {
+          "h": "Le Dossier",
+          "t": "Après avoir consacré plus de vingt ans de sa vie à la B.S.T., Isaac Moreland s'était imposé comme l'un des enquêteurs les plus compétents du S.I.T., notamment dans les affaires de criminalité organisée et de corruption corporative. Ses résultats, ayant généré de nombreux conflits d'intérêt, que ce soit à cause de considérations éthiques ou de conflits d'intérêts entre une B.S.T pour lui corrompue et des corpos avides de pouvoir, ainsi que plusieurs différends avec sa hiérarchie en résultant, finirent par provoquer sa mise au placard du service puis son inévitable démission. C'est dans ces circonstances que Bartholomew Hargreave, conscient de ses compétences et de ses nombreux contacts, lui proposa de rejoindre son entourage."
+        },
+        {
+          "h": "Le Récit (Aujourd'hui)",
+          "t": "Désormais chargé du renseignement et des opérations sensibles de l'industriel, Moreland met son expérience au service de ses ambitions politiques, tout en profitant de sa nouvelle position pour régler quelques vieux comptes avec ses anciens employeurs."
+        }
+      ],
+      "sub": "Responsable sécurité interne",
+      "tag": "The Magician",
+      "tiles": [
+        {
+          "a": "Ex-flic",
+          "b": "S.I.T"
+        }
+      ]
+    },
+    {
       "id": "julian",
       "cat": "Cercle intime",
       "color": "#e05050",
-      "eye": "",
+      "eye": "The Magician",
       "img": "https://i.imgur.com/5dRykrW.png",
       "link": "",
       "linkLabel": "",
       "lite": false,
       "name": "Julian November",
       "obj": [],
-      "order": 2,
-      "pos": "",
-      "role": "",
-      "secs": [],
-      "sub": "",
-      "tag": "",
-      "tiles": []
-    },
-    {
-      "id": "isaac",
-      "cat": "Cercle intime",
-      "color": "#1298b0",
-      "eye": "",
-      "img": "https://2img.net/i.imgur.com/XLF0fkE.png",
-      "link": "",
-      "linkLabel": "",
-      "lite": false,
-      "name": "Isaac Moreland",
-      "obj": [],
       "order": 3,
       "pos": "",
-      "role": "",
+      "role": "Directeur de Campagne",
       "secs": [],
       "sub": "",
       "tag": "",
@@ -82,5 +100,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792855041014
+  "rev": 1792855932788
 }
