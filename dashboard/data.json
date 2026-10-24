@@ -1,5 +1,20 @@
 {
-  "journal": [],
+  "journal": [
+    {
+      "id": "emvmki7oqadesx",
+      "order": 1,
+      "cat": "Intrigue principale",
+      "title": "How it all begins",
+      "place": "Middletown",
+      "st": "done",
+      "date": "",
+      "link": "https://www.nihilum-rp.fr/t1413-bartholomew-bart-hargreave-iii",
+      "track": false,
+      "steps": [],
+      "who": "Ellie Whitaker, Isaac Moreland",
+      "summary": "Ellie rencontre un étrange personnage qui lui invite de se présenter au QG de campagne de Bart Hargreave pour un poste des plus intéressants."
+    }
+  ],
   "codex": [
     {
       "id": "ellie",
@@ -96,11 +111,11 @@
       "secs": [
         {
           "h": "Le Dossier",
-          "t": ""
+          "t": "Après avoir passé près de trente ans au service de Kogarasu, Julian November s'était hissé parmi les cadres influents des relations publiques de l'Omnisciente. Spécialisé dans les affaires institutionnelles et la communication politique, il avait notamment représenté la corporation auprès des autorités civiles de Triomphe, conseillé ses dirigeants sur des questions particulièrement sensibles et participé à plusieurs opérations médiatiques d'envergure. Fin diplomate, doté d'un charisme certain et d'une compréhension remarquable des rapports de pouvoir, November semblait promis à une carrière confortable au sein de la mégacorporation. Les circonstances qui amenèrent finalement un homme de son calibre à rejoindre l'entourage de Bartholomew Hargreave demeurent cependant assez obscures."
         },
         {
           "h": "Le Récit (Aujourd'hui)",
-          "t": ""
+          "t": "Désormais directeur de la communication de la campagne Hargreave, Julian November met son expérience des milieux corporatistes et politiques au service des ambitions électorales de l'industriel. Derrière ses manières affables et son professionnalisme irréprochable se cache un stratège particulièrement habile, dont les véritables intentions restent difficiles à cerner. Quant à savoir ce qu'un ancien cadre de Kogarasu espère obtenir en misant sur un candidat aussi imprévisible que Hargreave... It's anybody's guess."
         }
       ],
       "sub": "Directeur de Campagne",
@@ -119,5 +134,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792856352859
+  "rev": 1792857011753
 }
