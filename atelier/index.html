@@ -1,0 +1,512 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Atelier Middletown</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Krona+One&family=DM+Mono:wght@400;500&family=Sansation:wght@400;700&family=Lora&display=swap">
+<style>
+/* Layout: editor column (list + form) beside a sticky live preview; stacks under 1100px. Single dark look, matching the forum. */
+:root{
+  color-scheme:dark;
+  --bg:#0d0d0d; --panel:#161616; --card:#1e1e1e; --card2:#262626; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --t0:#fcfcfa; --t1:#d6d2cb; --t2:#8a857e; --t3:#4a4640;
+  --acc:#A4AE1C; --acc2:#bcc920; --accg:rgba(164,174,28,.08); --accb:rgba(164,174,28,.3);
+  --bad:#e05050; --ok:#34c764; --warn:#d1a23a;
+  --ff:'Krona One','Arial Black',sans-serif; --fm:'DM Mono',ui-monospace,Consolas,monospace; --ft:'Sansation','Trebuchet MS',sans-serif;
+}
+html,body{background:var(--bg);color:var(--t1)}
+body{font:400 14px/1.5 var(--ft);padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+*{box-sizing:border-box}
+.ed{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.ed-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ed-brand{display:flex;align-items:center;gap:12px}
+.ed-gem{width:18px;height:22px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(90deg,var(--acc) 50%,var(--acc2) 50%)}
+.ed-brand h1{margin:0;font:400 17px/1 var(--ff);letter-spacing:.12em;text-transform:uppercase;color:var(--t0)}
+.ed-brand small{display:block;margin-top:6px;font:400 10px/1 var(--fm);letter-spacing:.24em;text-transform:uppercase;color:var(--t2)}
+.ed-status{display:inline-flex;align-items:center;gap:8px;font:400 10.5px/1 var(--fm);letter-spacing:.18em;text-transform:uppercase;color:var(--t2)}
+.ed-status::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--t3)}
+.ed-status[data-s=ok]::before{background:var(--ok)}
+.ed-status[data-s=saving]::before{background:var(--warn)}
+.ed-status[data-s=local]::before{background:var(--warn)}
+.ed-status[data-s=err]::before{background:var(--bad)}
+.ed-tabs{display:flex;flex-wrap:wrap;gap:4px}
+.ed-tab{padding:9px 14px;border:1px solid var(--line);border-radius:6px;background:transparent;font:400 10.5px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--t2);cursor:pointer}
+.ed-tab:hover{color:var(--t0);border-color:var(--line2)}
+.ed-tab[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#111}
+.ed-tab em{font-style:normal;opacity:.7;margin-left:6px}
+.ed-main{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:1100px){.ed-main{grid-template-columns:minmax(0,560px) minmax(0,1fr)}.ed-prev{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px)}}
+.ed-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ed-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.ed-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;font:400 10px/1 var(--fm);letter-spacing:.28em;text-transform:uppercase;color:var(--t2)}
+.ed-list{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.ed-cat{margin:10px 2px 2px;font:400 9.5px/1 var(--fm);letter-spacing:.28em;text-transform:uppercase;color:var(--t3)}
+.ed-cat:first-child{margin-top:0}
+.ed-item{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 10px;background:var(--card);border:1px solid var(--line);border-radius:8px}
+.ed-item[aria-current=true]{border-color:var(--accb);background:var(--accg);box-shadow:inset 3px 0 0 var(--sw,var(--acc))}
+.ed-pick{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:4px 0;background:none;border:0;text-align:left;color:inherit;cursor:pointer;font:inherit}
+.ed-sw{flex:none;width:10px;height:10px;border-radius:2px;transform:rotate(45deg);background:var(--sw,var(--t3))}
+.ed-pick b{display:block;font:700 13.5px/1.25 var(--ft);color:var(--t0);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ed-pick small{display:block;font:400 9.5px/1.4 var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--t2)}
+.ed-pick span{min-width:0}
+.ed-ib{flex:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--t2);font:500 13px/1 var(--fm);cursor:pointer}
+.ed-ib:hover{color:var(--t0);border-color:var(--line2)}
+.ed-ib:disabled{opacity:.3;cursor:default}
+.ed-ib.del:hover{color:var(--bad);border-color:rgba(224,80,80,.5)}
+.ed-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border:1px solid var(--line2);border-radius:7px;background:transparent;font:400 10.5px/1 var(--fm);letter-spacing:.18em;text-transform:uppercase;color:var(--t1);cursor:pointer}
+.ed-btn:hover{border-color:var(--accb);color:var(--acc)}
+.ed-btn.pri{background:var(--acc);border-color:var(--acc);color:#111}
+.ed-btn.pri:hover{background:var(--acc2);color:#111}
+.ed-btn.bad{border-color:rgba(224,80,80,.5);color:var(--bad)}
+.ed-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ed-empty{padding:18px;border:1px dashed var(--line2);border-radius:10px;font:400 12px/1.6 var(--fm);color:var(--t2)}
+.ed-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ed-f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ed-f.w{grid-column:1/-1}
+.ed-f label,.ed-lab{font:400 9.5px/1.2 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--t2)}
+.ed-f .hint{font:400 10.5px/1.4 var(--fm);color:var(--t3)}
+input[type=text],input[type=url],select,textarea{width:100%;min-width:0;padding:9px 10px;background:var(--card);border:1px solid var(--line2);border-radius:7px;color:var(--t0);font:400 13.5px/1.4 var(--ft)}
+textarea{min-height:110px;resize:vertical;line-height:1.55}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.ed-chk{display:inline-flex;align-items:center;gap:8px;font:400 12.5px/1.3 var(--ft);color:var(--t1);text-transform:none;letter-spacing:0}
+.ed-chk input{width:16px;height:16px;accent-color:var(--acc)}
+.ed-rep{display:flex;flex-direction:column;gap:6px}
+.ed-rr{display:flex;gap:6px;align-items:flex-start}
+.ed-rr>*{min-width:0}
+.ed-rr select{flex:0 0 120px}
+.ed-rr input,.ed-rr textarea{flex:1}
+.ed-rr .sub{flex:1;display:flex;flex-direction:column;gap:6px}
+.ed-rr textarea{min-height:80px}
+.ed-sws{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ed-swb{width:28px;height:28px;border-radius:6px;border:2px solid transparent;background:var(--c);cursor:pointer}
+.ed-swb[aria-pressed=true]{border-color:var(--t0)}
+.ed-swb.none{background:repeating-linear-gradient(135deg,var(--card2) 0 4px,var(--card) 4px 8px)}
+.ed-sws input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line2);border-radius:6px;background:none;cursor:pointer}
+.ed-confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px;border:1px solid rgba(224,80,80,.4);border-radius:8px;background:rgba(224,80,80,.06);font:400 12px/1.4 var(--fm);color:var(--t1)}
+.ed-prev{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ed-prevbox{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#0b0b0b;padding:12px;min-height:300px}
+.ed-prevbox .nm{margin:0 auto}
+.ed-note{font:400 10.5px/1.5 var(--fm);color:var(--t3)}
+.ed-code{width:100%;min-height:260px;font:400 11px/1.5 var(--fm);color:var(--t1);background:var(--card);white-space:pre-wrap;word-break:break-all}
+.ed-meter{font:400 11px/1.4 var(--fm);color:var(--t2)}
+.ed-meter b{font-weight:500;color:var(--t0)}
+.ed-meter.warn b{color:var(--warn)}
+.ed-meter.bad b{color:var(--bad)}
+.ed-toast{font:400 11px/1.4 var(--fm);color:var(--ok);min-height:1em}
+.ed-seg{display:inline-flex;border:1px solid var(--line2);border-radius:7px;overflow:hidden}
+.ed-seg button{padding:8px 12px;border:0;background:transparent;font:400 10px/1 var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--t2);cursor:pointer}
+.ed-seg button[aria-pressed=true]{background:var(--card2);color:var(--t0)}
+@media (max-width:560px){.ed-form{grid-template-columns:minmax(0,1fr)}.ed-rr{flex-wrap:wrap}.ed-rr select{flex:1 1 100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="ed">
+  <header class="ed-top">
+    <div class="ed-brand"><i class="ed-gem"></i><div><h1>Atelier Middletown</h1><small>Générateur du menu Nihilum : Middletown Stories</small></div></div>
+    <span class="ed-status" id="status" data-s="">Connexion…</span>
+  </header>
+  <nav class="ed-tabs" role="tablist" id="tabs">
+    <button class="ed-tab" role="tab" data-tab="journal" aria-selected="true" id="t-journal">Journal<em id="n-journal">0</em></button>
+    <button class="ed-tab" role="tab" data-tab="codex" aria-selected="false" id="t-codex">Codex<em id="n-codex">0</em></button>
+    <button class="ed-tab" role="tab" data-tab="settings" aria-selected="false" id="t-settings">Écran titre</button>
+    <button class="ed-tab" role="tab" data-tab="code" aria-selected="false" id="t-code">Code forum</button>
+  </nav>
+  <div class="ed-main">
+    <div class="ed-col" id="left"></div>
+    <aside class="ed-prev">
+      <div class="ed-row" style="justify-content:space-between">
+        <span class="ed-lab">Aperçu</span>
+        <span class="ed-seg" id="pmode"><button type="button" data-m="menu" aria-pressed="false">Écran titre</button><button type="button" data-m="ui" aria-pressed="true">Menu ouvert</button></span>
+      </div>
+      <div class="ed-prevbox" id="preview"></div>
+      <p class="ed-note">Les images hébergées ailleurs (imgur, catbox…) ne s'affichent pas dans cet aperçu, à cause des règles de sécurité de la page. Sur le forum, elles apparaîtront normalement.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+const DEFAULT_SETTINGS = {banSam:'https://i.imgur.com/9PLgXZi.jpeg', banBart:'https://i.imgur.com/EI8Frdk.jpeg', locL:'Middletown · Campagne préfectorale', locR:'Triomphe · 3178'};
+const PRESETS = [['Nihilum','#A4AE1C'],['Rouge','#e05050'],['Triomphe','#1298b0'],['Or','#d1a23a'],['EREBOS','#8b3ef5'],['Irréel','#C22222'],['Vert','#34c764']];
+const JCATS = ['Intrigue principale','Annexes','Terminées'];
+const XCATS = ['Cercle intime','Campagne','Soutiens','Adversaires','Middletown'];
+const STATUS = {live:'En cours', wait:'En attente', done:'Terminé'};
+
+/* ---------------- state ---------------- */
+const S = {journal:new Map(), codex:new Map(), settings:{...DEFAULT_SETTINGS}, tab:'journal', sel:{journal:null, codex:null}, pmode:'ui', db:null, confirm:null};
+const dirty = new Set(); const timers = {}; const inflight = {}; const again = {};
+const $ = s => document.querySelector(s);
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cssUrl = u => String(u||'').trim().replace(/[\s'"()<>\\]/g, c => encodeURIComponent(c));
+const safeHref = u => /^https?:\/\//i.test(String(u||'').trim()) ? String(u).trim() : '';
+const sorted = kind => [...S[kind].entries()].map(([id,d])=>({id,...d})).sort((a,b)=>(a.order??0)-(b.order??0));
+const uid = () => 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+/* ---------------- color ---------------- */
+function hexRgb(h){h=String(h||'').replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);if(isNaN(n)||h.length!==6)return null;return [n>>16&255,n>>8&255,n&255];}
+function colorVars(hex){
+  const c=hexRgb(hex); if(!c) return '';
+  const [r,g,b]=c; const l=x=>{x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)};
+  const lum=.2126*l(r)+.7152*l(g)+.0722*l(b);
+  const a2='#'+c.map(v=>Math.min(255,Math.round(v+(255-v)*.14)).toString(16).padStart(2,'0')).join('');
+  const reddish = r>g*1.4 && r>b*1.4;
+  return `--a:${hex};--a2:${a2};--ad:rgba(${r},${g},${b},.18);--ag:rgba(${r},${g},${b},.06);--ab:rgba(${r},${g},${b},.3);--ink:${lum>.18?'#111':'#fcfcfa'};--gl:${reddish?'#21BAD5':'#e05050'}`;
+}
+
+/* ---------------- generator (barebones) ---------------- */
+const CSS_SRC = `
+.nm{--a:#A4AE1C;max-width:940px;margin:16px auto;text-align:left;color:#d2cec7;font:14px/1.6 Sansation,'Trebuchet MS',sans-serif}
+.nm>input{position:absolute;opacity:0;width:1px;height:1px}
+.nmi{background:#151515;border:1px solid #2c2c2c;border-radius:8px;overflow:hidden}
+.nmt{padding:22px 16px 16px}
+.nmu{display:none}
+#nmgo:checked~.nmi .nmt{display:none}
+#nmgo:checked~.nmi .nmu{display:block}
+.nmh{margin:0 0 16px;text-align:center;font:30px/1 'Krona One',sans-serif;letter-spacing:4px;color:#f4f2ee}
+.nmh span{display:block;margin-top:8px;font:10px/1 'DM Mono',monospace;letter-spacing:4px;text-transform:uppercase;color:#8a857e}
+.nmb{display:block;margin:0 0 10px;border:1px solid #2c2c2c;border-radius:6px;overflow:hidden;background:#1d1d1d}
+.nmb img{display:block;width:100%;height:140px;object-fit:cover}
+.nmb div{padding:10px 12px;font:15px/1.3 'Krona One',sans-serif;text-transform:uppercase;color:#f4f2ee}
+.nmb small{display:block;margin-bottom:4px;font:10px/1 'DM Mono',monospace;letter-spacing:2px;color:#8a857e}
+.nmb b{float:right;font:10px/1.8 'DM Mono',monospace;letter-spacing:2px}
+.nmo{cursor:pointer}
+.nmo b{color:var(--a)}
+.nmo:hover{border-color:var(--a)}
+.nmk img{filter:grayscale(1) brightness(.6)}
+.nmk b{color:#e05050}
+.nmk .r,.nmk:hover .v{display:none}
+.nmk:hover .r{display:inline}
+.nmn{padding:10px 16px;border-bottom:1px solid #2c2c2c;font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase}
+.nm label{font-weight:inherit;text-transform:none;letter-spacing:normal}
+.nmn label{display:inline-block;margin-right:4px;padding:7px 10px;border-radius:4px;font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:#8a857e;cursor:pointer}
+.nmn .m{float:right;margin:0}
+#nmtj:checked~.nmi label[for=nmtj],#nmtc:checked~.nmi label[for=nmtc]{background:var(--a);color:#111}
+.nmv{display:none;padding:16px}
+#nmtj:checked~.nmi .nmvj,#nmtc:checked~.nmi .nmvc{display:flex;flex-wrap:wrap;gap:16px}
+.nml{flex:1 1 200px;min-width:0}
+.nmc{margin:12px 0 6px;font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:#6f6a64}
+.nmc:first-child{margin-top:0}
+.nme{display:flex;align-items:center;gap:10px;margin:0 0 5px;padding:6px 8px;background:#1d1d1d;border:1px solid #2c2c2c;border-left:3px solid #2c2c2c;border-radius:5px;cursor:pointer}
+.nme img{flex:none;width:36px;height:36px;object-fit:cover;border-radius:4px}
+.nme span{min-width:0;font:700 13px/1.3 Sansation,sans-serif;color:#d2cec7}
+.nme small{display:block;font:9.5px/1.4 'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:#8a857e}
+.nme em{margin-left:auto;font:normal 9px/1 'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--a)}
+.nmp{display:none;flex:3 1 400px;min-width:0;padding:18px;background:#1a1a1a;border:1px solid #2c2c2c;border-top:2px solid var(--a);border-radius:6px}
+.nmy{font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--a)}
+.nmnm{margin:8px 0 4px;font:21px/1.25 'Krona One',sans-serif;text-transform:uppercase;color:#f4f2ee}
+.nmsub{margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid #2c2c2c;font:10.5px/1.5 'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:#8a857e}
+.nmg{display:flex;flex-wrap:wrap;gap:16px}
+.nmlc{flex:1 1 150px;max-width:190px}
+.nmlc img{display:block;width:100%;height:240px;margin:0 0 6px;object-fit:cover;object-position:50% 15%;border-radius:6px}
+.nmti{margin:0 0 5px;padding:7px 10px;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:5px;font:700 12.5px/1.3 Sansation,sans-serif}
+.nmti small{display:block;font:9.5px/1.4 'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;color:var(--a)}
+.nm a.nmgo{display:block;padding:9px 10px;border-radius:5px;background:var(--a);font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:#111;text-decoration:none}
+.nmrc{flex:999 1 240px;min-width:0}
+.nmsh{margin:0 0 6px;font:10px/1 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:#6f6a64}
+.nmob{margin:0 0 16px;padding:0;list-style:none}
+.nmob li{margin:0 0 4px;padding:7px 10px;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:5px;font:700 13px/1.4 Sansation,sans-serif}
+.nmob li.on{border-color:var(--a);color:#f4f2ee}
+.nmob li.ok{color:#6f6a64;text-decoration:line-through}
+.nmob i{font-style:normal;color:var(--a)}
+.nmw{margin:0 0 16px;font:700 13px/1.6 Sansation,sans-serif}
+.nm p.nmtx{margin:0 0 14px;font:15px/1.7 Lora,Georgia,serif;color:#d2cec7}
+.nmz{padding:10px;border:1px dashed #2c2c2c;border-radius:5px;font:11px/1.5 'DM Mono',monospace;color:#8a857e}
+`;
+const CSS_BASE = CSS_SRC.replace(/\s*\n\s*/g,'').replace(/\s*([{};])\s*/g,'$1').replace(/;}/g,'}');
+const SEL_ON = '{background:#232323;border-left-color:var(--a)}';
+
+function groups(list){const m=new Map();list.forEach(e=>{const c=(e.cat||'').trim()||'Sans catégorie';if(!m.has(c))m.set(c,[]);m.get(c).push(e);});return [...m.entries()];}
+function paras(t){return String(t||'').split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p class="nmtx">${esc(p).replace(/\n/g,'<br>')}</p>`).join('');}
+const hexOk = h => /^#[0-9a-f]{6}$/i.test(String(h||''));
+const imgUrl = u => { const s=String(u||'').trim(); return /^https?:\/\//i.test(s) ? esc(s) : ''; };
+const posOk = p => String(p||'').replace(/[^0-9%.\sa-z-]/gi,'').trim();
+
+function generate(){
+  const J=sorted('journal'), X=sorted('codex'), st=S.settings;
+  J.forEach((e,n)=>{e.rid='nmj'+(n+1);}); X.forEach((e,n)=>{e.rid='nmx'+(n+1);});
+  const all=[...J,...X];
+  let css=CSS_BASE;
+  if(all.length){
+    css+=all.map(e=>`#${e.rid}:checked~.nmi label[for=${e.rid}]`).join(',')+SEL_ON;
+    css+=all.map(e=>`#${e.rid}:checked~.nmi .p${e.rid}`).join(',')+'{display:block}';
+  }
+  let inp='<input type="checkbox" id="nmgo"><input type="radio" name="nmtab" id="nmtj" checked><input type="radio" name="nmtab" id="nmtc">';
+  J.forEach((e,n)=>{inp+=`<input type="radio" name="nmj" id="${e.rid}"${n?'':' checked'}>`;});
+  X.forEach((e,n)=>{inp+=`<input type="radio" name="nmx" id="${e.rid}"${n?'':' checked'}>`;});
+  const sh = t => `<div class="nmsh">// ${esc(t)}</div>`;
+
+  let jl='', jp='';
+  for(const [cat,es] of groups(J)){
+    jl+=`<div class="nmc">// ${esc(cat)}</div>`;
+    for(const e of es){
+      const stt=e.st||'live', status=STATUS[stt]||'En cours', title=e.title||'Sans titre', place=e.place||'';
+      jl+=`<label class="nme" for="${e.rid}"><span>${esc(title)}<small>${esc([place,status].filter(Boolean).join(' · '))}</small></span>${e.track?'<em>Suivi</em>':''}</label>`;
+      const steps=(e.steps||[]).filter(s=>s.text&&s.text.trim());
+      const who=String(e.who||'').split(',').map(w=>w.trim()).filter(Boolean);
+      const href=safeHref(e.link);
+      const tiles=[[place,'Lieu'],[e.date,'Date'],[status,'Statut']].filter(t=>t[0]).map(([a,b])=>`<div class="nmti">${esc(a)}<small>${b}</small></div>`).join('');
+      const go=href?`<a class="nmgo" href="${esc(href)}" target="_blank">Lire le sujet ↗</a>`:'';
+      let r='';
+      if(steps.length) r+=sh('Objectifs')+`<ul class="nmob">${steps.map(s=>`<li${s.state==='cur'?' class="on"':s.state==='done'?' class="ok"':''}>${s.state==='cur'?'<i>◆</i> ':''}${esc(s.text)}</li>`).join('')}</ul>`;
+      if(who.length) r+=sh('Participants')+`<div class="nmw">${who.map(esc).join(' · ')}</div>`;
+      if(String(e.summary||'').trim()) r+=sh('Résumé')+paras(e.summary);
+      jp+=`<div class="nmp p${e.rid}"><div class="nmy">// ${esc([cat,place].filter(Boolean).join(' · '))}</div><div class="nmnm">${esc(title)}</div><div class="nmsub">${esc([status,e.date].filter(Boolean).join(' · '))}</div><div class="nmg">${tiles||go?`<div class="nmlc">${tiles}${go}</div>`:''}<div class="nmrc">${r}</div></div></div>`;
+    }
+  }
+  if(!J.length) jl='<div class="nmz">Aucun sujet archivé pour l\'instant.</div>';
+
+  let cl='', cp='', num=0;
+  for(const [cat,es] of groups(X)){
+    cl+=`<div class="nmc">// ${esc(cat)}</div>`;
+    for(const e of es){
+      num++;
+      const col=hexOk(e.color)?` style="--a:${e.color}"`:'';
+      const name=e.name||'Sans nom', src=imgUrl(e.img), pos=posOk(e.pos);
+      cl+=`<label class="nme" for="${e.rid}"${col}>${src?`<img src="${src}" alt="">`:''}<span>${esc(name)}${e.role?`<small>${esc(e.role)}</small>`:''}</span></label>`;
+      const eye=e.eye||`Dossier ${String(num).padStart(2,'0')} · ${cat}`;
+      const tiles=(e.tiles||[]).filter(t=>(t.a||'').trim()||(t.b||'').trim()).map(t=>`<div class="nmti">${esc(t.a)}${t.b?`<small>${esc(t.b)}</small>`:''}</div>`).join('');
+      const href=safeHref(e.link);
+      const go=href?`<a class="nmgo" href="${esc(href)}" target="_blank">${esc(e.linkLabel||'Voir la fiche')} ↗</a>`:'';
+      const obj=(e.obj||[]).map(o=>String(o||'').trim()).filter(Boolean);
+      let r='';
+      if(obj.length) r+=sh('Objectifs')+`<ul class="nmob">${obj.map((o,k)=>`<li${k?'':' class="on"'}>${k?'':'<i>◆</i> '}${esc(o)}</li>`).join('')}</ul>`;
+      (e.secs||[]).filter(s=>String(s.t||'').trim()).forEach(s=>{ r+=sh(s.h||'Notes')+paras(s.t); });
+      const pic=src?`<img src="${src}" alt=""${pos||e.lite?` style="${pos?`object-position:${pos};`:''}${e.lite?'height:150px':''}"`:''}>`:'';
+      const left=pic+(e.tag?`<div class="nmti"><small>${esc(e.tag)}</small></div>`:'')+tiles+go;
+      cp+=`<div class="nmp p${e.rid}"${col}><div class="nmy">// ${esc(eye)}</div><div class="nmnm">${esc(name)}</div><div class="nmsub">${esc(e.sub||e.role||'')}</div><div class="nmg">${left?`<div class="nmlc">${left}</div>`:''}${r?`<div class="nmrc">${r}</div>`:''}</div></div>`;
+    }
+  }
+  if(!X.length) cl='<div class="nmz">Aucune fiche pour l\'instant.</div>';
+
+  const bs=imgUrl(st.banSam), bb=imgUrl(st.banBart);
+  const title=`<div class="nmt"><div class="nmh">NIHILUM<span>Middletown Stories</span></div>`
+    +`<div class="nmb nmk">${bs?`<img src="${bs}" alt="">`:''}<div><b><span class="v">Verrouillé</span><span class="r">Accès refusé</span></b><small>Continuer l'histoire de</small>Samantha Keyes</div></div>`
+    +`<label class="nmb nmo" for="nmgo">${bb?`<img src="${bb}" alt="" style="object-position:55% 22%">`:''}<div><b>Charger ↵</b><small>Continuer l'histoire de</small>Bart Hargreave</div></label></div>`;
+  const ui=`<div class="nmu"><div class="nmn"><label for="nmtj">Journal</label><label for="nmtc">Codex</label><label class="m" for="nmgo">← Menu</label></div>`
+    +`<div class="nmv nmvj"><div class="nml">${jl}</div>${jp}</div><div class="nmv nmvc"><div class="nml">${cl}</div>${cp}</div></div>`;
+  return { code:`<style>${css}</style><div class="nm">${inp}<div class="nmi">${title}${ui}</div></div>`, J, X };
+}
+
+/* ---------------- persistence ---------------- */
+function setStatus(s, text){ const el=$('#status'); el.dataset.s=s; el.textContent=text; }
+function refreshStatus(){
+  if(!S.db){ setStatus('local','Brouillon local, sur cet appareil'); return; }
+  const busy = Object.keys(timers).length || Object.keys(inflight).length;
+  setStatus(busy?'saving':'ok', busy?'Enregistrement…':'Enregistré');
+}
+function localSave(){ try{ localStorage.setItem('mts-v1', JSON.stringify({journal:[...S.journal], codex:[...S.codex], settings:S.settings})); }catch(e){} }
+function localLoad(){ try{ const d=JSON.parse(localStorage.getItem('mts-v1')||'null'); if(d){ S.journal=new Map(d.journal||[]); S.codex=new Map(d.codex||[]); S.settings={...DEFAULT_SETTINGS,...(d.settings||{})}; } }catch(e){} }
+const pathOf = (kind,id) => kind==='settings' ? 'settings/main' : `${kind}/${id}`;
+function dataOf(kind,id){ return kind==='settings' ? S.settings : S[kind].get(id); }
+function queueSave(kind,id,delay=700){
+  const key=pathOf(kind,id); dirty.add(key);
+  if(!S.db){ localSave(); return; }
+  clearTimeout(timers[key]); timers[key]=setTimeout(()=>{ delete timers[key]; flush(kind,id); }, delay); refreshStatus();
+}
+async function flush(kind,id){
+  const key=pathOf(kind,id);
+  if(inflight[key]){ again[key]=true; return; }
+  const body=dataOf(kind,id); if(!body){ dirty.delete(key); refreshStatus(); return; }
+  inflight[key]=true; refreshStatus();
+  try{ await S.db.doc(key).set(JSON.parse(JSON.stringify(body))); }
+  catch(e){ setStatus('err', e&&e.code==='quota_exceeded' ? 'Base pleine : supprime des entrées' : 'Échec de l\'enregistrement, réessaie'); delete inflight[key]; return; }
+  delete inflight[key];
+  if(again[key]){ delete again[key]; return flush(kind,id); }
+  if(!timers[key]) dirty.delete(key);
+  refreshStatus();
+}
+async function removeDoc(kind,id){
+  const key=pathOf(kind,id); clearTimeout(timers[key]); delete timers[key]; dirty.delete(key);
+  S[kind].delete(id);
+  if(!S.db){ localSave(); return; }
+  try{ await S.db.doc(key).delete(); }catch(e){ setStatus('err','Suppression échouée, réessaie'); return; }
+  refreshStatus();
+}
+function applySnap(kind, snap){
+  const seen=new Set();
+  snap.docs.forEach(d=>{ seen.add(d.id); const key=pathOf(kind,d.id); if(!dirty.has(key)) S[kind].set(d.id, JSON.parse(JSON.stringify(d.data()))); });
+  [...S[kind].keys()].forEach(id=>{ if(!seen.has(id) && !dirty.has(pathOf(kind,id))) S[kind].delete(id); });
+  renderLeftIfIdle(); schedulePreview(); counts();
+}
+function renderLeftIfIdle(){ const a=document.activeElement; if(a && $('#left').contains(a) && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return; renderLeft(); }
+
+/* ---------------- UI ---------------- */
+function counts(){ $('#n-journal').textContent=S.journal.size; $('#n-codex').textContent=S.codex.size; }
+function swatch(e){ return e && e.color ? `style="--sw:${esc(e.color)}"` : ''; }
+
+function renderLeft(){
+  const L=$('#left'); const tab=S.tab;
+  if(tab==='settings') return renderSettings(L);
+  if(tab==='code') return renderCode(L);
+  const kind=tab, list=sorted(kind);
+  if(!S.sel[kind] || !S[kind].has(S.sel[kind])) S.sel[kind]=list[0]?.id||null;
+  let h=`<section class="ed-box"><div class="ed-h"><span>${kind==='journal'?'Sujets archivés':'Fiches du codex'}</span><button class="ed-btn pri" type="button" id="add">+ ${kind==='journal'?'Nouveau sujet':'Nouvelle fiche'}</button></div>`;
+  if(!list.length) h+=`<div class="ed-empty">${kind==='journal'?'Aucun sujet pour l\'instant. Ajoute ton premier RP avec « Nouveau sujet » : titre, lieu, statut, lien du forum.':'Aucune fiche pour l\'instant. Ajoute un personnage avec « Nouvelle fiche » : nom, portrait, catégorie.'}</div>`;
+  else{
+    h+='<ul class="ed-list">'; let lastCat=null;
+    list.forEach((e,i)=>{
+      const cat=(e.cat||'').trim()||'Sans catégorie';
+      if(cat!==lastCat){ h+=`<li class="ed-cat">// ${esc(cat)}</li>`; lastCat=cat; }
+      const t=kind==='journal'?(e.title||'Sans titre'):(e.name||'Sans nom');
+      const s=kind==='journal'?[e.place,STATUS[e.st||'live']].filter(Boolean).join(' · '):(e.role||'');
+      h+=`<li class="ed-item" aria-current="${e.id===S.sel[kind]}" ${swatch(e)}><button class="ed-pick" type="button" data-pick="${e.id}"><i class="ed-sw"></i><span><b>${esc(t)}</b><small>${esc(s)||'&nbsp;'}</small></span></button><button class="ed-ib" type="button" data-mv="-1" data-id="${e.id}" aria-label="Monter" ${i?'':'disabled'}>↑</button><button class="ed-ib" type="button" data-mv="1" data-id="${e.id}" aria-label="Descendre" ${i<list.length-1?'':'disabled'}>↓</button><button class="ed-ib del" type="button" data-del="${e.id}" aria-label="Supprimer">✕</button></li>`;
+      if(S.confirm===e.id) h+=`<li class="ed-confirm">Supprimer « ${esc(t)} » ? C'est définitif.<button class="ed-btn bad" type="button" data-delok="${e.id}">Supprimer</button><button class="ed-btn" type="button" data-delno>Annuler</button></li>`;
+    });
+    h+='</ul>';
+  }
+  h+='</section>';
+  const cur=S.sel[kind]&&S[kind].get(S.sel[kind]);
+  if(cur) h+= kind==='journal'?formJournal(S.sel[kind],cur):formCodex(S.sel[kind],cur);
+  L.innerHTML=h;
+}
+function f(label, inner, wide, hint){ return `<div class="ed-f${wide?' w':''}"><label>${label}</label>${inner}${hint?`<span class="hint">${hint}</span>`:''}</div>`; }
+function ti(k,v,ph,type='text',list=''){ return `<input type="${type}" data-k="${k}" value="${esc(v)}" placeholder="${esc(ph||'')}"${list?` list="${list}"`:''}>`; }
+function formJournal(id,e){
+  const steps=e.steps||[];
+  return `<section class="ed-box" data-form="journal" data-id="${id}"><div class="ed-h"><span>Modifier le sujet</span></div><datalist id="dl-j">${JCATS.map(c=>`<option value="${esc(c)}">`).join('')}</datalist><div class="ed-form">
+  ${f('Titre du sujet', ti('title',e.title,'[EVENT] Prométhée – Triomphe'), true)}
+  ${f('Catégorie', ti('cat',e.cat,'Intrigue principale','text','dl-j'))}
+  ${f('Lieu', ti('place',e.place,'Middletown'))}
+  ${f('Statut', `<select data-k="st">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}"${(e.st||'live')===k?' selected':''}>${v}</option>`).join('')}</select>`)}
+  ${f('Date', ti('date',e.date,'Octobre 3178'))}
+  ${f('Lien du sujet', ti('link',e.link,'https://www.nihilum-rp.fr/t…','url'), true)}
+  <div class="ed-f w"><label class="ed-chk"><input type="checkbox" data-k="track"${e.track?' checked':''}> Sujet suivi (badge SUIVI)</label></div>
+  <div class="ed-f w"><span class="ed-lab">Objectifs</span><div class="ed-rep">${steps.map((s,i)=>`<div class="ed-rr"><select data-step="${i}" data-sk="state">${[['done','Fait'],['cur','En cours'],['todo','À faire']].map(([k,v])=>`<option value="${k}"${s.state===k?' selected':''}>${v}</option>`).join('')}</select><input type="text" data-step="${i}" data-sk="text" value="${esc(s.text)}" placeholder="Objectif"><button class="ed-ib del" type="button" data-rm="steps" data-i="${i}" aria-label="Retirer">✕</button></div>`).join('')}<div><button class="ed-btn" type="button" data-addrow="steps">+ Objectif</button></div></div></div>
+  ${f('Participants', ti('who',e.who,'Samsara, Zane, Cyann'), true, 'Séparés par des virgules.')}
+  ${f('Résumé', `<textarea data-k="summary" placeholder="Ce qui s'est passé dans ce sujet…">${esc(e.summary)}</textarea>`, true, 'Une ligne vide sépare deux paragraphes.')}
+  </div></section>`;
+}
+function formCodex(id,e){
+  const tiles=e.tiles||[], obj=e.obj||[], secs=e.secs||[];
+  const sw=PRESETS.map(([n,c])=>`<button class="ed-swb" type="button" style="--c:${c}" data-color="${c}" aria-pressed="${(e.color||'').toLowerCase()===c.toLowerCase()}" title="${n}"></button>`).join('');
+  return `<section class="ed-box" data-form="codex" data-id="${id}"><div class="ed-h"><span>Modifier la fiche</span></div><datalist id="dl-x">${XCATS.map(c=>`<option value="${esc(c)}">`).join('')}</datalist><div class="ed-form">
+  ${f('Nom', ti('name',e.name,'Eleanor Whitaker'))}
+  ${f('Catégorie', ti('cat',e.cat,'Cercle intime','text','dl-x'))}
+  ${f('Fonction (sous le nom, dans la liste)', ti('role',e.role,'Cheffe de cabinet'), true)}
+  ${f('Portrait (lien de l\'image)', ti('img',e.img,'https://i.imgur.com/…','url'), true)}
+  ${f('Cadrage du portrait', ti('pos',e.pos,'50% 15%'), false, 'Facultatif. Position horizontale puis verticale.')}
+  <div class="ed-f"><label>Couleur</label><div class="ed-sws">${sw}<button class="ed-swb none" type="button" data-color="" aria-pressed="${!e.color}" title="Couleur du thème"></button><input type="color" data-k="color" value="${hexRgb(e.color)?e.color:'#a4ae1c'}" aria-label="Couleur personnalisée"></div></div>
+  ${f('Ligne au-dessus du nom', ti('eye',e.eye,'Automatique : Dossier 01 · Catégorie'), true)}
+  ${f('Sous-titre', ti('sub',e.sub,'Cheffe de cabinet de Bartholomew Hargreave III'), true)}
+  ${f('Étiquette sur le portrait', ti('tag',e.tag,'Campagne Hargreave'))}
+  <div class="ed-f"><label>&nbsp;</label><label class="ed-chk"><input type="checkbox" data-k="lite"${e.lite?' checked':''}> Fiche allégée (portrait carré)</label></div>
+  <div class="ed-f w"><span class="ed-lab">Tuiles sous le portrait</span><div class="ed-rep">${tiles.map((t,i)=>`<div class="ed-rr"><input type="text" data-tile="${i}" data-tk="a" value="${esc(t.a)}" placeholder="Université de Middletown"><input type="text" data-tile="${i}" data-tk="b" value="${esc(t.b)}" placeholder="Sciences politiques"><button class="ed-ib del" type="button" data-rm="tiles" data-i="${i}" aria-label="Retirer">✕</button></div>`).join('')}<div><button class="ed-btn" type="button" data-addrow="tiles">+ Tuile</button></div></div></div>
+  <div class="ed-f w"><span class="ed-lab">Objectifs (le premier est suivi)</span><div class="ed-rep">${obj.map((o,i)=>`<div class="ed-rr"><input type="text" data-obj="${i}" value="${esc(o)}" placeholder="Objectif"><button class="ed-ib del" type="button" data-rm="obj" data-i="${i}" aria-label="Retirer">✕</button></div>`).join('')}<div><button class="ed-btn" type="button" data-addrow="obj">+ Objectif</button></div></div></div>
+  <div class="ed-f w"><span class="ed-lab">Sections de texte</span><div class="ed-rep">${secs.map((s,i)=>`<div class="ed-rr"><div class="sub"><input type="text" data-sec="${i}" data-xk="h" value="${esc(s.h)}" placeholder="Profil"><textarea data-sec="${i}" data-xk="t" placeholder="Texte de la section…">${esc(s.t)}</textarea></div><button class="ed-ib del" type="button" data-rm="secs" data-i="${i}" aria-label="Retirer">✕</button></div>`).join('')}<div><button class="ed-btn" type="button" data-addrow="secs">+ Section</button></div></div></div>
+  ${f('Bouton lien : texte', ti('linkLabel',e.linkLabel,'Voir la fiche'))}
+  ${f('Bouton lien : adresse', ti('link',e.link,'https://www.nihilum-rp.fr/t…','url'))}
+  </div></section>`;
+}
+function renderSettings(L){
+  const s=S.settings;
+  L.innerHTML=`<section class="ed-box" data-form="settings"><div class="ed-h"><span>Écran titre</span></div><div class="ed-form">
+  ${f('Bannière Samantha Keyes (verrouillée)', ti('banSam',s.banSam,'https://i.imgur.com/…','url'), true)}
+  ${f('Bannière Bart Hargreave', ti('banBart',s.banBart,'https://i.imgur.com/…','url'), true)}
+  </div></section>`;
+}
+function renderCode(L){
+  const {code}=generate(); const n=code.length;
+  const cls=n>60000?'bad':n>50000?'warn':'';
+  L.innerHTML=`<section class="ed-box"><div class="ed-h"><span>Code à coller sur le forum</span><button class="ed-btn pri" type="button" id="copy">Copier le code</button></div>
+  <p class="ed-meter ${cls}"><b>${n.toLocaleString('fr-FR')}</b> caractères. Forumactif limite la taille d'un message ; teste-le dans un message de prévisualisation avant de le publier.</p>
+  <textarea class="ed-code" id="code" readonly spellcheck="false">${esc(code)}</textarea><p class="ed-toast" id="toast" aria-live="polite"></p></section>
+  <section class="ed-box"><div class="ed-h"><span>Sauvegarde</span><button class="ed-btn" type="button" id="copyjson">Copier la sauvegarde</button></div>
+  <p class="ed-note" style="margin:0 0 10px">Une copie de toutes tes entrées, au format texte. Colle-la ici pour tout restaurer.</p>
+  <textarea class="ed-code" id="json" spellcheck="false" style="min-height:120px" placeholder="Colle une sauvegarde ici…"></textarea>
+  <div class="ed-row" style="margin-top:10px"><button class="ed-btn" type="button" id="import">Restaurer cette sauvegarde</button></div>
+  ${S.confirm==='import'?'<div class="ed-confirm" style="margin-top:10px">Remplacer toutes les entrées actuelles par cette sauvegarde ?<button class="ed-btn bad" type="button" id="importok">Remplacer</button><button class="ed-btn" type="button" data-delno>Annuler</button></div>':''}
+  <p class="ed-toast" id="toast2" aria-live="polite"></p></section>`;
+}
+function backup(){ return JSON.stringify({journal:sorted('journal'), codex:sorted('codex'), settings:S.settings}); }
+async function copyText(text, el, toastId){
+  const t=$(toastId);
+  try{ await navigator.clipboard.writeText(text); t.textContent='Copié.'; }
+  catch(e){ if(el){ el.focus(); el.select(); } t.textContent='Copie automatique bloquée : le texte est sélectionné, fais Ctrl+C.'; }
+}
+
+/* ---------------- preview ---------------- */
+let pvT=null;
+function schedulePreview(){ clearTimeout(pvT); pvT=setTimeout(renderPreview,200); }
+function renderPreview(){
+  const {code,J,X}=generate(); const box=$('#preview'); box.innerHTML=code;
+  box.querySelectorAll('img').forEach(i=>i.addEventListener('error',()=>{i.style.visibility='hidden';}));
+  if(S.pmode==='ui'){ const g=box.querySelector('#nmgo'); if(g) g.checked=true; }
+  const kind=S.tab==='codex'?'codex':S.tab==='journal'?'journal':null;
+  if(kind){ const t=box.querySelector(kind==='codex'?'#nmtc':'#nmtj'); if(t) t.checked=true;
+    const arr=kind==='codex'?X:J; const e=arr.find(x=>x.id===S.sel[kind]); if(e){ const r=box.querySelector('#'+e.rid); if(r) r.checked=true; } }
+  counts();
+}
+
+/* ---------------- events ---------------- */
+function nextOrder(kind){ const l=sorted(kind); return l.length?(l[l.length-1].order||0)+1:1; }
+document.addEventListener('click', ev=>{
+  const b=ev.target.closest('button'); if(!b) return;
+  if(b.dataset.tab){ S.tab=b.dataset.tab; S.confirm=null; document.querySelectorAll('.ed-tab').forEach(x=>x.setAttribute('aria-selected', x===b)); renderLeft(); schedulePreview(); return; }
+  if(b.dataset.m){ S.pmode=b.dataset.m; document.querySelectorAll('#pmode button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderPreview(); return; }
+  const kind=S.tab;
+  if(b.id==='add'){
+    const id=uid(); const base= kind==='journal'
+      ? {order:nextOrder(kind), cat:'Intrigue principale', title:'', place:'', st:'live', date:'', link:'', track:false, steps:[], who:'', summary:''}
+      : {order:nextOrder(kind), cat:'Cercle intime', name:'', role:'', img:'', pos:'', color:'', eye:'', sub:'', tag:'', lite:false, tiles:[], obj:[], secs:[{h:'Profil',t:''}], link:'', linkLabel:''};
+    S[kind].set(id,base); S.sel[kind]=id; queueSave(kind,id,0); renderLeft(); schedulePreview();
+    const first=$('#left [data-form] input'); if(first) first.focus(); return;
+  }
+  if(b.dataset.pick){ S.sel[kind]=b.dataset.pick; S.confirm=null; renderLeft(); schedulePreview(); return; }
+  if(b.dataset.mv){
+    const l=sorted(kind), i=l.findIndex(x=>x.id===b.dataset.id), j=i+Number(b.dataset.mv); if(j<0||j>=l.length) return;
+    [l[i],l[j]]=[l[j],l[i]];
+    l.forEach((x,n)=>{ const d=S[kind].get(x.id); if(d.order!==n+1){ d.order=n+1; queueSave(kind,x.id,0); } });
+    renderLeft(); schedulePreview(); return;
+  }
+  if(b.dataset.del){ S.confirm=b.dataset.del; renderLeft(); return; }
+  if(b.hasAttribute('data-delno')){ S.confirm=null; renderLeft(); return; }
+  if(b.dataset.delok){ const id=b.dataset.delok; S.confirm=null; removeDoc(kind,id).then(()=>{ renderLeft(); schedulePreview(); counts(); }); renderLeft(); schedulePreview(); return; }
+  const form=b.closest('[data-form]');
+  if(form && (form.dataset.form==='journal'||form.dataset.form==='codex')){
+    const fk=form.dataset.form, id=form.dataset.id, e=S[fk].get(id); if(!e) return;
+    if(b.dataset.addrow){ const k=b.dataset.addrow; e[k]=e[k]||[]; e[k].push(k==='steps'?{state:'todo',text:''}:k==='tiles'?{a:'',b:''}:k==='secs'?{h:'',t:''}:''); queueSave(fk,id); renderLeft(); schedulePreview(); return; }
+    if(b.dataset.rm){ const k=b.dataset.rm; (e[k]||[]).splice(Number(b.dataset.i),1); queueSave(fk,id); renderLeft(); schedulePreview(); return; }
+    if(b.dataset.color!==undefined){ e.color=b.dataset.color; queueSave(fk,id); renderLeft(); schedulePreview(); return; }
+  }
+  if(b.id==='copy'){ copyText($('#code').value, $('#code'), '#toast'); return; }
+  if(b.id==='copyjson'){ const j=$('#json'); j.value=backup(); copyText(j.value, j, '#toast2'); return; }
+  if(b.id==='import'){ try{ JSON.parse($('#json').value); S.confirm='import'; const v=$('#json').value; renderLeft(); $('#json').value=v; }catch(e){ $('#toast2').textContent='Ce texte n\'est pas une sauvegarde valide.'; } return; }
+  if(b.id==='importok'){ doImport($('#json').value); return; }
+});
+async function doImport(txt){
+  let d; try{ d=JSON.parse(txt); }catch(e){ return; }
+  S.confirm=null;
+  for(const kind of ['journal','codex']){ for(const id of [...S[kind].keys()]) await removeDoc(kind,id); }
+  for(const kind of ['journal','codex']){ (d[kind]||[]).forEach((e,i)=>{ const {id,rid,...rest}=e; const nid=id||uid(); rest.order=rest.order??i+1; S[kind].set(nid,rest); queueSave(kind,nid,0); }); }
+  if(d.settings){ S.settings={...DEFAULT_SETTINGS,...d.settings}; queueSave('settings',null,0); }
+  renderLeft(); schedulePreview(); const t=$('#toast2'); if(t) t.textContent='Sauvegarde restaurée.';
+}
+document.addEventListener('input', ev=>{
+  const el=ev.target; const form=el.closest('[data-form]'); if(!form) return;
+  const fk=form.dataset.form;
+  if(fk==='settings'){ if(el.dataset.k){ S.settings[el.dataset.k]=el.value; queueSave('settings',null); schedulePreview(); } return; }
+  const id=form.dataset.id, e=S[fk].get(id); if(!e) return;
+  if(el.dataset.k){ const k=el.dataset.k; e[k]= el.type==='checkbox'?el.checked:el.value; if(k==='color'){ form.querySelectorAll('.ed-swb').forEach(x=>x.setAttribute('aria-pressed','false')); } }
+  else if(el.dataset.step!==undefined){ e.steps[Number(el.dataset.step)][el.dataset.sk]=el.value; }
+  else if(el.dataset.tile!==undefined){ e.tiles[Number(el.dataset.tile)][el.dataset.tk]=el.value; }
+  else if(el.dataset.obj!==undefined){ e.obj[Number(el.dataset.obj)]=el.value; }
+  else if(el.dataset.sec!==undefined){ e.secs[Number(el.dataset.sec)][el.dataset.xk]=el.value; }
+  else return;
+  queueSave(fk,id); schedulePreview();
+  if(['title','name','role','place','st','cat'].includes(el.dataset.k)){ const it=document.querySelector(`[data-pick="${id}"]`); if(it){ const l=sorted(fk).find(x=>x.id===id); it.querySelector('b').textContent= fk==='journal'?(l.title||'Sans titre'):(l.name||'Sans nom'); it.querySelector('small').textContent= fk==='journal'?[l.place,STATUS[l.st||'live']].filter(Boolean).join(' · '):(l.role||''); } }
+});
+document.addEventListener('change', ev=>{ const el=ev.target; if(el.dataset && (el.dataset.k==='cat'||el.dataset.k==='color'||el.dataset.k==='st')) renderLeftIfIdle(); });
+window.addEventListener('beforeunload', ()=>{ Object.keys(timers).forEach(k=>{ clearTimeout(timers[k]); }); });
+
+/* ---------------- boot ---------------- */
+renderLeft(); renderPreview(); setStatus('', 'Connexion…');
+(async()=>{
+  let db=null; try{ db = window.claude && window.claude.use ? await window.claude.use('db') : null; }catch(e){ db=null; }
+  if(!db){ localLoad(); S.db=null; refreshStatus(); renderLeft(); renderPreview(); return; }
+  S.db=db; refreshStatus();
+  const onErr = e => setStatus('err', 'Connexion à la base perdue, recharge la page');
+  db.collection('journal').orderBy('order').onSnapshot(s=>applySnap('journal',s), onErr);
+  db.collection('codex').orderBy('order').onSnapshot(s=>applySnap('codex',s), onErr);
+  db.doc('settings/main').onSnapshot(d=>{ if(d.exists && !dirty.has('settings/main')){ S.settings={...DEFAULT_SETTINGS,...d.data()}; if(S.tab==='settings') renderLeftIfIdle(); schedulePreview(); } }, onErr);
+})();
+</script>
+
+</body></html>
