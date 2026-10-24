@@ -2,6 +2,7 @@
   "journal": [],
   "codex": [
     {
+      "id": "ellie",
       "cat": "Cercle intime",
       "color": "#A4AE1C",
       "eye": "",
@@ -9,18 +10,35 @@
       "link": "",
       "linkLabel": "",
       "lite": false,
-      "name": "Eleanor Whitaker",
-      "obj": [],
+      "name": "Eleanor Whitaker, PhD.",
+      "obj": [
+        "Faire gagner Hargreave aux élections prefectorales.",
+        "Survivre le monde corpo sans (trop) de séquelles."
+      ],
       "order": 1,
       "pos": "",
-      "role": "",
-      "secs": [],
-      "sub": "",
-      "tag": "",
-      "tiles": [],
-      "id": "ellie"
+      "role": "Cheffe de Cabinet",
+      "secs": [
+        {
+          "h": "Background",
+          "t": "Ex-post-doc à l'université de Middletown, elle détient un doctorat en sciences politiques portant notamment sur le fonctionnement des institutions publiques de Triomphe, leur légitimité institutionnelle, les rapports entre intérêts économiques et autorité politique, ainsi que les mécanismes de gouvernance territoriale. En parallèle, elle est également extrêmement engagée dans la vie civique et associative du district où elle acquit une certaine réputation pour sa capacité à fédérer des intérêts bien souvent divergents. \n\n"
+        },
+        {
+          "h": "Actuellement",
+          "t": "Désormais cheffe de cabinet de Bartholomew « Bart » Hargreave III, candidat à la préfecture de Middletown, elle se retrouve plongée dans l'univers nouveau et intense de l'intrigue politico-corporate. Reste à savoir si son expérience du terrain et sa connaissance des institutions feront d'elle un élément déterminant de la campagne, ou si cette nouvelle réalité politique, bien éloignée des amphis et des associations de voisins, finira par avoir raison de ses convictions."
+        }
+      ],
+      "sub": "Cheffe de cabinet de campagne",
+      "tag": "Campagne Hargreave",
+      "tiles": [
+        {
+          "a": "Ex-Universitaire",
+          "b": "Université de Middletown"
+        }
+      ]
     },
     {
+      "id": "julian",
       "cat": "Cercle intime",
       "color": "#e05050",
       "eye": "",
@@ -36,10 +54,10 @@
       "secs": [],
       "sub": "",
       "tag": "",
-      "tiles": [],
-      "id": "julian"
+      "tiles": []
     },
     {
+      "id": "isaac",
       "cat": "Cercle intime",
       "color": "#1298b0",
       "eye": "",
@@ -55,12 +73,14 @@
       "secs": [],
       "sub": "",
       "tag": "",
-      "tiles": [],
-      "id": "isaac"
+      "tiles": []
     }
   ],
   "settings": {
     "banSam": "https://i.imgur.com/9PLgXZi.jpeg",
-    "banBart": "https://i.imgur.com/EI8Frdk.jpeg"
-  }
+    "banBart": "https://i.imgur.com/EI8Frdk.jpeg",
+    "locL": "Middletown · Campagne préfectorale",
+    "locR": "Triomphe · 3178"
+  },
+  "rev": 1792855041014
 }
