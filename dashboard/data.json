@@ -13,6 +13,7 @@
       "name": "Eleanor Whitaker, PhD.",
       "obj": [
         "Faire gagner Hargreave aux élections prefectorales.",
+        "Gérer le planning, les coûts, et la situation opérationnelle au niveau quotidien de la campagne.",
         "Survivre le monde corpo sans (trop) de séquelles."
       ],
       "order": 1,
@@ -78,20 +79,38 @@
       "id": "julian",
       "cat": "Cercle intime",
       "color": "#e05050",
-      "eye": "The Magician",
+      "eye": "DOSSIER 03",
       "img": "https://i.imgur.com/5dRykrW.png",
       "link": "",
       "linkLabel": "",
       "lite": false,
       "name": "Julian November",
-      "obj": [],
+      "obj": [
+        "Faire gagner Hargreave aux élections prefectorales.",
+        "Développer la stratégie de communication permettant à Hargreave de battre Saunders.",
+        "???"
+      ],
       "order": 3,
       "pos": "",
       "role": "Directeur de Campagne",
-      "secs": [],
-      "sub": "",
-      "tag": "",
-      "tiles": []
+      "secs": [
+        {
+          "h": "Le Dossier",
+          "t": ""
+        },
+        {
+          "h": "Le Récit (Aujourd'hui)",
+          "t": ""
+        }
+      ],
+      "sub": "Directeur de Campagne",
+      "tag": "The Magician",
+      "tiles": [
+        {
+          "a": "Ex-Spin Doctor",
+          "b": "Kogarasu"
+        }
+      ]
     }
   ],
   "settings": {
@@ -100,5 +119,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792855932788
+  "rev": 1792856352859
 }
