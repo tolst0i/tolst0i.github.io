@@ -89,11 +89,31 @@ function render(data){
   }
   if(!X.length) cl='<div class="nqj-arch">Aucune fiche pour l\'instant.</div>';
 
-  const menu=P.menu.replace('{{BAN_SAM}}',cssUrl(st.banSam||'https://i.imgur.com/9PLgXZi.jpeg')).replace('{{BAN_BART}}',cssUrl(st.banBart||'https://i.imgur.com/EI8Frdk.jpeg')).replace('{{NC}}',X.length).replace('{{NJ}}',J.length);
+  const menu=P.menu.replace('{{BAN_SAM}}',cssUrl(st.banSam||'https://i.imgur.com/9PLgXZi.jpeg')).replace('{{BAN_BART}}',cssUrl(st.banBart||'https://i.imgur.com/EI8Frdk.jpeg')).replace('{{NC}}',X.length).replace('{{NJ}}',J.length).replace('<button type="button" class="nqj-snd" hidden>Son : on</button>','');
   const loc=s=>esc(s).replace(/ · /g,' <b>·</b> ');
-  const ui=`<div class="nqj-ui"><div class="nqj-top"><div class="nqj-brand"><i class="nqj-gem"></i>NIHILUM</div><div class="nqj-tabs"><label class="nqj-tab" for="nqj-tj"><span class="nqj-k">J</span>Journal</label><label class="nqj-tab" for="nqj-tc"><span class="nqj-k">K</span>Codex</label></div><div class="nqj-dots"><label class="nqj-dot" for="nqj-th0" style="--c:#A4AE1C" title="Nihilum"></label><label class="nqj-dot" for="nqj-th1" style="--c:#21BAD5" title="Triomphe"></label><label class="nqj-dot" for="nqj-th2" style="--c:#9747FF" title="EREBOS"></label><label class="nqj-dot" for="nqj-th3" style="--c:#C22222" title="Irréel"></label></div></div><div class="nqj-loc"><span>// ${loc(st.locL||'Middletown · Campagne préfectorale')}</span><span>${loc(st.locR||'Triomphe · 3178')}</span></div><div class="nqj-body nqj-view nqj-vj"><div class="nqj-list">${jl}</div><div class="nqj-panes">${jp}</div></div><div class="nqj-body nqj-view nqj-vc"><div class="nqj-list">${cl}</div><div class="nqj-panes">${cp}</div></div><div class="nqj-foot"><div class="nqj-hints"><span class="nqj-hint"><span class="nqj-k">J</span>Journal</span><span class="nqj-hint"><span class="nqj-k">K</span>Codex</span><label class="nqj-hint nqj-esc" for="nqj-go"><span class="nqj-k">ESC</span>Déconnexion</label></div><span class="nqj-fr"><button type="button" class="nqj-snd" hidden>Son : on</button><span>Nihilum / Triomphe</span>${EDIT}</span></div></div>`;
-  document.getElementById('app').innerHTML=`<style>${css}</style><div class="nqj">${inp}<div class="nqj-in">${menu}${ui}</div></div>`;
+  const ui=`<div class="nqj-ui"><div class="nqj-top"><div class="nqj-brand"><i class="nqj-gem"></i>NIHILUM</div><div class="nqj-tabs"><label class="nqj-tab" for="nqj-tj"><span class="nqj-k">J</span>Journal</label><label class="nqj-tab" for="nqj-tc"><span class="nqj-k">K</span>Codex</label></div><div class="nqj-dots"><label class="nqj-dot" for="nqj-th0" style="--c:#A4AE1C" title="Nihilum"></label><label class="nqj-dot" for="nqj-th1" style="--c:#21BAD5" title="Triomphe"></label><label class="nqj-dot" for="nqj-th2" style="--c:#9747FF" title="EREBOS"></label><label class="nqj-dot" for="nqj-th3" style="--c:#C22222" title="Irréel"></label></div></div><div class="nqj-loc"><span>// ${loc(st.locL||'Middletown · Campagne préfectorale')}</span><span>${loc(st.locR||'Triomphe · 3178')}</span></div><div class="nqj-body nqj-view nqj-vj"><div class="nqj-list">${jl}</div><div class="nqj-panes">${jp}</div></div><div class="nqj-body nqj-view nqj-vc"><div class="nqj-list">${cl}</div><div class="nqj-panes">${cp}</div></div><div class="nqj-foot"><div class="nqj-hints"><span class="nqj-hint"><span class="nqj-k">J</span>Journal</span><span class="nqj-hint"><span class="nqj-k">K</span>Codex</span><label class="nqj-hint nqj-esc" for="nqj-go"><span class="nqj-k">ESC</span>Déconnexion</label></div><span class="nqj-fr"><span>Nihilum / Triomphe</span>${EDIT}</span></div></div>`;
+  css+='.nqj-ctl{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin:0 0 8px}.nqj-mus{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;background:transparent;border:1px solid var(--line2);border-radius:4px;font:500 9.5px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--tt);cursor:pointer;transition:color .2s,border-color .2s,background .2s}.nqj-mus:hover{color:var(--a);border-color:var(--ab)}.nqj-mus[aria-pressed=true]{background:var(--ag);border-color:var(--ab);color:var(--a)}.nqj-mus:focus-visible{outline:2px solid var(--a);outline-offset:2px}.nqj-mus i{font-style:normal}.nqj-mus[aria-pressed=true] i{animation:nqj-pulse 1.6s ease-in-out infinite}@keyframes nqj-pulse{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.nqj-mus i{animation:none!important}}';
+  const ctl='<div class="nqj-ctl"><button type="button" class="nqj-mus" aria-pressed="false"><i>♪</i><span>Musique : off</span></button><button type="button" class="nqj-snd" hidden>Son : on</button></div>';
+  document.getElementById('app').innerHTML=`<style>${css}</style><div class="nqj">${inp}${ctl}<div class="nqj-in">${menu}${ui}</div></div>`;
   try{ (new Function(P.sfx))(); }catch(e){}
+  musique();
+}
+const MUSIC_URL='https://files.catbox.moe/88g6xd.mp3', MUSIC_VOL=.35;
+let MUS=null, MUS_ON=false, fadeT=null;
+function fade(to, ms, done){
+  clearInterval(fadeT); const from=MUS.volume, steps=Math.max(1,Math.round(ms/40)); let i=0;
+  fadeT=setInterval(()=>{ i++; MUS.volume=Math.max(0,Math.min(1,from+(to-from)*i/steps)); if(i>=steps){ clearInterval(fadeT); if(done) done(); } },40);
+}
+function musique(){
+  const btn=document.querySelector('.nqj-mus'); if(!btn) return;
+  const paint=()=>{ btn.setAttribute('aria-pressed', MUS_ON?'true':'false'); btn.querySelector('span').textContent='Musique : '+(MUS_ON?'on':'off'); };
+  paint();
+  btn.addEventListener('click', ()=>{
+    if(!MUS){ MUS=new Audio(MUSIC_URL); MUS.loop=true; MUS.preload='auto'; MUS.volume=0; }
+    MUS_ON=!MUS_ON; paint();
+    if(MUS_ON){ MUS.volume=0; const pr=MUS.play(); if(pr&&pr.catch) pr.catch(()=>{ MUS_ON=false; paint(); }); fade(MUSIC_VOL, 900); }
+    else{ fade(0, 500, ()=>{ if(!MUS_ON) MUS.pause(); }); }
+  });
 }
 fetch('data.json?t='+Date.now(), {cache:'no-store'})
   .then(r=>r.ok?r.json():Promise.reject(r.status))
