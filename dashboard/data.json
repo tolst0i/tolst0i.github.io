@@ -4,7 +4,7 @@
       "id": "emvmki7oqadesx",
       "order": 1,
       "cat": "Intrigue principale",
-      "title": "How it all begins",
+      "title": "Prologue - How it all begins",
       "place": "Middletown",
       "st": "done",
       "date": "",
@@ -12,7 +12,21 @@
       "track": false,
       "steps": [],
       "who": "Ellie Whitaker, Isaac Moreland",
-      "summary": "Ellie rencontre un étrange personnage qui lui invite de se présenter au QG de campagne de Bart Hargreave pour un poste des plus intéressants."
+      "summary": "Eleanor Whitaker encontre un étrange personnage qui lui invite de se présenter au QG de campagne de Bart Hargreave pour un poste des plus intéressants."
+    },
+    {
+      "id": "emvmz17t3gj4mj",
+      "order": 2,
+      "cat": "Intrigue principale",
+      "title": "Chapitre 1 - The First Interview",
+      "place": "Middletown",
+      "st": "done",
+      "date": "",
+      "link": "https://www.nihilum-rp.fr/t1425-solo-chapter-1#12971",
+      "track": false,
+      "steps": [],
+      "who": "Bart Hargreave, Julian November, Ellie Whitaker, Isaac Moreland",
+      "summary": "Où Bart discute avec ses sbires de l'intérêt d'embaucher une directrice de cabinet."
     }
   ],
   "codex": [
@@ -134,5 +148,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792862250537
+  "rev": 1792881169391
 }
