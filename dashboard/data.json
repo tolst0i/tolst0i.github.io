@@ -27,6 +27,20 @@
       "steps": [],
       "who": "Bart Hargreave, Julian November, Ellie Whitaker, Isaac Moreland",
       "summary": "Où Bart discute avec ses sbires de l'intérêt d'embaucher une directrice de cabinet."
+    },
+    {
+      "id": "emw4uiyzdmf8zx",
+      "order": 3,
+      "cat": "Intrigue d'Isaac",
+      "title": "The Dickensian Aspect",
+      "place": "Oasis Nord",
+      "st": "live",
+      "date": "",
+      "link": "https://www.nihilum-rp.fr/t1455-the-dickensian-aspect",
+      "track": false,
+      "steps": [],
+      "who": "Isaac Moreland , Wesley Anderson",
+      "summary": "Une rencontre à l'apparence inoffensive d'abord, un prétexte pour demander un service à un ancien collègue d'Isaac ensuite. Où cette affaire nous mènera-t-elle ?"
     }
   ],
   "codex": [
@@ -148,5 +162,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1792881169391
+  "rev": 1793961926809
 }
