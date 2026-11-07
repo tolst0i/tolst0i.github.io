@@ -127,7 +127,7 @@
       "tag": "The Hermit",
       "tiles": [
         {
-          "a": "Ex-flic",
+          "a": "Ex-Flic",
           "b": "S.I.T"
         }
       ]
@@ -200,5 +200,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1794087744442
+  "rev": 1794087771530
 }
