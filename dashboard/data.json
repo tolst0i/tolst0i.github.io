@@ -29,8 +29,22 @@
       "summary": "Où Bart discute avec ses sbires de l'intérêt d'embaucher une directrice de cabinet."
     },
     {
-      "id": "emw4uiyzdmf8zx",
+      "id": "emw6wxr025ue9d",
       "order": 3,
+      "cat": "Intrigue principale",
+      "title": "Chapitre 2 - Old World Glory",
+      "place": "Middletown",
+      "st": "done",
+      "date": "",
+      "link": "https://www.nihilum-rp.fr/t1456-solo-chapter-2",
+      "track": false,
+      "steps": [],
+      "who": "Bart Hargreave, Ellie Whitaker",
+      "summary": "Où Ellie discute avec Bart du passé de New Haven, et du futur de Triomphe."
+    },
+    {
+      "id": "emw4uiyzdmf8zx",
+      "order": 4,
       "cat": "Intrigue d'Isaac",
       "title": "The Dickensian Aspect",
       "place": "Oasis Nord",
@@ -46,7 +60,7 @@
   "codex": [
     {
       "id": "ellie",
-      "cat": "Cercle intime",
+      "cat": "Cercle de Bart (PNJ)",
       "color": "#A4AE1C",
       "eye": "DOSSIER 01",
       "img": "https://i.imgur.com/qqIYWTO.jpeg",
@@ -83,7 +97,7 @@
     },
     {
       "id": "isaac",
-      "cat": "Cercle intime",
+      "cat": "Cercle de Bart (PNJ)",
       "color": "#1298b0",
       "eye": "DOSSIER 02",
       "img": "https://2img.net/i.imgur.com/XLF0fkE.png",
@@ -120,7 +134,7 @@
     },
     {
       "id": "julian",
-      "cat": "Cercle intime",
+      "cat": "Cercle de Bart (PNJ)",
       "color": "#e05050",
       "eye": "DOSSIER 03",
       "img": "https://i.imgur.com/5dRykrW.png",
@@ -154,6 +168,30 @@
           "b": "Kogarasu"
         }
       ]
+    },
+    {
+      "id": "emw6az3lylzkqm",
+      "order": 4,
+      "cat": "Rencontres importantes",
+      "name": "Wesley Anderson",
+      "role": "",
+      "img": "",
+      "pos": "",
+      "color": "",
+      "eye": "",
+      "sub": "",
+      "tag": "",
+      "lite": false,
+      "tiles": [],
+      "obj": [],
+      "secs": [
+        {
+          "h": "Profil",
+          "t": ""
+        }
+      ],
+      "link": "",
+      "linkLabel": ""
     }
   ],
   "settings": {
@@ -162,5 +200,5 @@
     "locL": "Middletown · Campagne préfectorale",
     "locR": "Triomphe · 3178"
   },
-  "rev": 1793961926809
+  "rev": 1794087744442
 }
