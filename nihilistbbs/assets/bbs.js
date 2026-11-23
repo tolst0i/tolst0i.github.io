@@ -211,9 +211,9 @@
     var f = el('form', 'req');
     f.setAttribute('autocomplete', 'off');
     f.innerHTML =
-      '<label class="opt"><span class="t">(Canal)</span>' +
-      '<input name="q" type="text" spellcheck="false" autocapitalize="off" placeholder="mot-clé" aria-label="Mot-clé du canal"></label>' +
-      '<div class="btns"><button class="btn" type="submit">Ouvrir</button></div>' +
+      '<label class="opt"><span class="t">(Recherche)</span>' +
+      '<input name="q" type="text" spellcheck="false" autocapitalize="off" placeholder="titre du sujet" aria-label="Titre du sujet"></label>' +
+      '<div class="btns"><button class="btn" type="submit">Chercher</button></div>' +
       '<div class="log" aria-live="polite"></div>';
     var input = $('input', f), box = $('.log', f), busy = false;
     f.addEventListener('submit', function (e) {
@@ -270,7 +270,7 @@
     $('#req', w).appendChild(f);
     $('.body', w).appendChild(settings(false));
     Sfx.bind(w); Ambient.mount(); enableSkip();
-    runLog($('#boot', w), HANDSHAKE.concat([{ t: 'en attente d\'un mot-clé', c: 'ok' }])).then(function () {
+    runLog($('#boot', w), HANDSHAKE.concat([{ t: 'en attente d\'une recherche', c: 'ok' }])).then(function () {
       $('#boot', w).lastChild.insertAdjacentHTML('beforeend', '<i class="caret"></i>');
       $('input', f).focus({ preventScroll: true });
     });
@@ -284,55 +284,55 @@
         .replace(/\n/g, '<br>') + '</p>';
     }).join('');
   }
-  // "To" field: handles that open a paragraph (@name ...), otherwise everyone
-  function recipients(body) {
-    var out = [], seen = {};
-    String(body).split(/\n+/).forEach(function (line) {
-      var m = line.match(/^\s*@([\w\-]+)/);
-      if (m && !seen[m[1].toLowerCase()]) { seen[m[1].toLowerCase()] = 1; out.push(m[1]); }
-    });
-    return out.length ? out.join(', ') : 'Tous';
-  }
-
   function thread() {
     var data;
     try { data = JSON.parse($('#thread').textContent); } catch (e) { data = null; }
     if (!data) {
-      $('#app').appendChild(win('NihilistBBS', '', '<div class="body"><div class="log"><div class="ln err">canal corrompu</div></div></div>'));
+      $('#app').appendChild(win('NihilistBBS', '', '<div class="body"><div class="log"><div class="ln err">sujet corrompu</div></div></div>'));
       return;
     }
     var slug = slugify(data.keyword || '');
     var viewer = data.viewer || 'anonymous';
     var posts = data.posts || [];
     var title = data.title || data.keyword || '';
+    var board = data.board || '';
     var n = posts.length;
-    function two(i) { return (i < 10 ? '0' : '') + i; }
-    document.title = slug + ' // NIHILISTBBS';
+    document.title = title + ' // NIHILISTBBS';
 
-    var w = win('NihilistBBS // ' + esc(slug), esc(HOST),
+    var crumbs = '<a href="' + ROOT + '">NihilistBBS</a>' +
+      (board ? ' <i>»</i> <span>' + esc(board) + '</span>' : '') +
+      ' <i>»</i> <span class="cur">' + esc(slug) + '</span>';
+
+    var w = win('NihilistBBS', esc(HOST),
       '<div class="body"><div class="log" id="slog"></div></div>' +
       '<div id="tb" class="hidden">' +
-        '<div class="topic">' + (data.tag ? '<span class="tg">(' + esc(data.tag) + ')</span> ' : '') +
-          '<span class="tt">' + esc(title) + '</span>' +
-          '<div class="cnt">' + n + ' message' + (n > 1 ? 's' : '') + '</div></div>' +
-        '<div class="board" tabindex="0" aria-label="Messages"></div>' +
-        '<div class="body" id="foot"><div id="req"></div></div>' +
+        '<div class="crumbs">' + crumbs + '</div>' +
+        '<div class="sess">Connecté : <b>' + esc(viewer) + '</b> · <span class="y">' + esc(data.status || 'lecture seule') + '</span></div>' +
+        '<div class="topic">' +
+          '<h2>' + (data.tag ? '<span class="tg">(' + esc(data.tag) + ')</span> ' : '') + esc(title) + '</h2>' +
+          '<div class="tbar"><span>' + n + ' message' + (n > 1 ? 's' : '') + ' · Page 1 sur 1</span>' +
+          '<button class="btn off" type="button" disabled>Répondre</button></div>' +
+        '</div>' +
+        '<div class="thead"><span>Auteur</span><span>Message</span></div>' +
+        '<div class="posts"></div>' +
+        '<div class="body" id="foot"><div class="opts" id="req"></div></div>' +
       '</div>');
     $('#app').appendChild(w);
 
-    var board = $('.board', w);
+    var list = $('.posts', w);
     var lv = viewer.toLowerCase();
     var nodes = posts.map(function (p, i) {
-      var cls = 'msg' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
+      var cls = 'post' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
       var date = String(p.date || '').replace(/\s*·\s*/, ' ');
       return el('article', cls,
-        '<div class="mh">Msg ' + two(i + 1) + '/' + two(n) + '</div>' +
-        '<div class="mf"><b>De</b><span class="nk">' + esc(p.author) + '</span>' +
-          (p.badge ? ' <span class="bd">(' + esc(p.badge) + ')</span>' : '') + '</div>' +
-        '<div class="mf"><b>À</b>' + esc(recipients(p.body || '')) + '</div>' +
-        '<div class="mf"><b>Sujet</b>' + (i ? 'Re: ' : '') + esc(title) + '</div>' +
-        '<div class="mf"><b>Date</b>' + esc(date) + '</div>' +
-        '<div class="mb">' + msgBody(p.body || '') + '</div>');
+        '<div class="au"><div class="nk">' + esc(p.author) + '</div>' +
+          (p.badge ? '<div class="bd">(' + esc(p.badge) + ')</div>' : '') + '</div>' +
+        '<div class="ms" id="m' + (i + 1) + '">' +
+          '<div class="mh"><span>Posté le ' + esc(date) + '</span><a href="#m' + (i + 1) + '">#' + (i + 1) + '</a></div>' +
+          '<div class="sj">Sujet : ' + (i ? 'Re: ' : '') + esc(title) + '</div>' +
+          '<div class="mb">' + msgBody(p.body || '') + '</div>' +
+        '</div>' +
+        '<div class="pf"><a href="#top">↑ Haut</a></div>');
     });
 
     $('#req', w).appendChild(requestBlock());
@@ -340,13 +340,12 @@
     Sfx.bind(w); Ambient.mount(); enableSkip();
 
     runLog($('#slog', w), [
-      'login ' + viewer + ' / ••••••••',
-      { t: data.status || 'read-only', c: 'warn' }
-    ].concat(HANDSHAKE, [{ t: 'fil « ' + slug + ' » ouvert', c: 'ok' }])).then(function () {
+      'login ' + viewer + ' / ••••••••'
+    ].concat(HANDSHAKE, [{ t: 'sujet « ' + slug + ' » trouvé', c: 'ok' }])).then(function () {
       $('#tb', w).classList.remove('hidden');
       var p = Promise.resolve();
       nodes.forEach(function (m) {
-        p = p.then(function () { m.classList.add('fx'); board.appendChild(m); return wait(40); });
+        p = p.then(function () { m.classList.add('fx'); list.appendChild(m); return wait(40); });
       });
     });
   }
@@ -366,7 +365,7 @@
     runLog($('#nlog', w), [
       'handshake accepted',
       'résolution « ' + slug + ' »',
-      { t: 'aucun canal à ce mot-clé', c: 'err' },
+      { t: 'aucun sujet ne correspond', c: 'err' },
       { t: 'requête journalisée', c: 'warn' }
     ]).then(function () { $('input', f).focus({ preventScroll: true }); });
   }
