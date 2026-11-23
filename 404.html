@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>404</title>
+<script>
+  // Unknown NIHILISTBBS channels land here (GitHub Pages serves this file for any missing path).
+  window.__bbs = /^\/nihilistbbs(\/|$)/i.test(location.pathname);
+  if (window.__bbs) {
+    document.title = 'CANAL INTROUVABLE // NIHILISTBBS';
+    document.write('<link rel="stylesheet" href="/nihilistbbs/assets/bbs.css">');
+  }
+</script>
+<style>
+  .plain{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0b0b;color:#7a7670;font:12px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.2em;text-transform:uppercase}
+  .plain a{color:#adadad}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  if (window.__bbs) {
+    document.body.setAttribute('data-page', 'notfound');
+    document.write('<script src="/nihilistbbs/assets/bbs.js"><\/script>');
+  } else {
+    document.body.className = 'plain';
+    document.getElementById('app').innerHTML = '404 // <a href="/">retour</a>';
+  }
+</script>
+</body>
+</html>
