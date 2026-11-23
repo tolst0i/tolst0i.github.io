@@ -276,15 +276,23 @@
     });
   }
 
-  function chatBody(body) {
+  function msgBody(body) {
     return String(body).split(/\n{2,}/).map(function (p) {
-      return esc(p)
+      return '<p>' + esc(p)
         .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
         .replace(/(^|[\s(«])@([\w\-]+)/g, '$1<span class="at">@$2</span>')
-        .replace(/\n/g, '<br>');
-    }).join('<span class="pb"></span>');
+        .replace(/\n/g, '<br>') + '</p>';
+    }).join('');
   }
-  function prefix(role) { return role === 'admin' ? '@' : role === 'press' ? '+' : ''; }
+  // "To" field: handles that open a paragraph (@name ...), otherwise everyone
+  function recipients(body) {
+    var out = [], seen = {};
+    String(body).split(/\n+/).forEach(function (line) {
+      var m = line.match(/^\s*@([\w\-]+)/);
+      if (m && !seen[m[1].toLowerCase()]) { seen[m[1].toLowerCase()] = 1; out.push(m[1]); }
+    });
+    return out.length ? out.join(', ') : 'Tous';
+  }
 
   function thread() {
     var data;
@@ -296,46 +304,35 @@
     var slug = slugify(data.keyword || '');
     var viewer = data.viewer || 'anonymous';
     var posts = data.posts || [];
-    document.title = '#' + slug + ' // NIHILISTBBS';
+    var title = data.title || data.keyword || '';
+    var n = posts.length;
+    function two(i) { return (i < 10 ? '0' : '') + i; }
+    document.title = slug + ' // NIHILISTBBS';
 
-    var seen = {}, people = [];
-    posts.forEach(function (p) {
-      var k = String(p.author).toLowerCase();
-      if (!seen[k]) { seen[k] = 1; people.push(p); }
-    });
-    if (!seen[viewer.toLowerCase()]) people.push({ author: viewer });
-    var who = people.map(function (p) {
-      var c = p.role === 'admin' ? 'op' : p.role === 'press' ? 'vo' : '';
-      return '<span class="' + c + '">' + prefix(p.role) + esc(p.author) + '</span>';
-    }).join(' ');
-
-    var w = win('#' + esc(slug), esc(HOST),
-      '<div class="body">' +
-        '<div class="log" id="slog"></div>' +
-      '</div>' +
+    var w = win('NihilistBBS // ' + esc(slug), esc(HOST),
+      '<div class="body"><div class="log" id="slog"></div></div>' +
       '<div id="tb" class="hidden">' +
-        '<div class="topic"><b>Sujet :</b> ' + (data.tag ? '<span class="tg">(' + esc(data.tag) + ')</span> ' : '') +
-          '<span class="tt">' + esc(data.title || data.keyword) + '</span></div>' +
-        '<div class="who">Participants (' + people.length + ') : ' + who + '</div>' +
-        '<div class="chat" tabindex="0" aria-label="Messages"></div>' +
+        '<div class="topic">' + (data.tag ? '<span class="tg">(' + esc(data.tag) + ')</span> ' : '') +
+          '<span class="tt">' + esc(title) + '</span>' +
+          '<div class="cnt">' + n + ' message' + (n > 1 ? 's' : '') + '</div></div>' +
+        '<div class="board" tabindex="0" aria-label="Messages"></div>' +
         '<div class="body" id="foot"><div id="req"></div></div>' +
       '</div>');
     $('#app').appendChild(w);
 
-    var chat = $('.chat', w);
+    var board = $('.board', w);
     var lv = viewer.toLowerCase();
-    var nodes = [], lastDay = null;
-    nodes.push(el('div', 'sys', '*** <b>' + esc(viewer) + '</b> a rejoint #' + esc(slug) + ' (lecture seule)'));
-    posts.forEach(function (p) {
-      var parts = String(p.date || '').split(/\s*·\s*/);
-      var day = parts[0] || '', time = parts[1] || '';
-      if (day && day !== lastDay) { nodes.push(el('div', 'sys day', '--- ' + esc(day) + ' ---')); lastDay = day; }
-      var cls = 'm' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
-      nodes.push(el('p', cls,
-        '<span class="ts">[' + esc(time) + ']</span>' +
-        '<span class="nk">' + prefix(p.role) + esc(p.author) + '</span>' +
-        (p.badge ? '<span class="bd">(' + esc(p.badge) + ')</span>' : '') + ' ' +
-        '<span class="tx">' + chatBody(p.body || '') + '</span>'));
+    var nodes = posts.map(function (p, i) {
+      var cls = 'msg' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
+      var date = String(p.date || '').replace(/\s*·\s*/, ' ');
+      return el('article', cls,
+        '<div class="mh">Msg ' + two(i + 1) + '/' + two(n) + '</div>' +
+        '<div class="mf"><b>De</b><span class="nk">' + esc(p.author) + '</span>' +
+          (p.badge ? ' <span class="bd">(' + esc(p.badge) + ')</span>' : '') + '</div>' +
+        '<div class="mf"><b>À</b>' + esc(recipients(p.body || '')) + '</div>' +
+        '<div class="mf"><b>Sujet</b>' + (i ? 'Re: ' : '') + esc(title) + '</div>' +
+        '<div class="mf"><b>Date</b>' + esc(date) + '</div>' +
+        '<div class="mb">' + msgBody(p.body || '') + '</div>');
     });
 
     $('#req', w).appendChild(requestBlock());
@@ -345,11 +342,11 @@
     runLog($('#slog', w), [
       'login ' + viewer + ' / ••••••••',
       { t: data.status || 'read-only', c: 'warn' }
-    ].concat(HANDSHAKE, [{ t: 'canal #' + slug + ' ouvert', c: 'ok' }])).then(function () {
+    ].concat(HANDSHAKE, [{ t: 'fil « ' + slug + ' » ouvert', c: 'ok' }])).then(function () {
       $('#tb', w).classList.remove('hidden');
       var p = Promise.resolve();
       nodes.forEach(function (m) {
-        p = p.then(function () { m.classList.add('fx'); chat.appendChild(m); return wait(40); });
+        p = p.then(function () { m.classList.add('fx'); board.appendChild(m); return wait(40); });
       });
     });
   }
