@@ -1,4 +1,4 @@
-/* NIHILISTBBS // EREBOS ENGRAMME INTERFACE // shared runtime */
+/* NIHILISTBBS // shared runtime */
 (function () {
   'use strict';
 
@@ -7,6 +7,7 @@
   var ASSETS = SCRIPT ? new URL('.', SCRIPT.src).href : '';
   var ROOT = new URL('../', ASSETS).href;            // .../nihilistbbs/
   var AMBIENT_SRC = new URL('ambient.mp3', ASSETS).href;
+  var STRIP = 'bbs.nihilist.triomphe/null // TELNET-SHADOW';
   var QUOTES = [
     "La presse libre est le quatrième pouvoir. Les trois autres l'ont rachetée."
   ];
@@ -239,7 +240,7 @@
     // session panel
     var sess = el('div', 'term');
     sess.innerHTML =
-      '<div class="strip"><span>EREBOS ENGRAMME INTERFACE // NODE TRIOMPHE-7 // BUILD 3178.04</span><button class="ambient" type="button"></button></div>' +
+      '<div class="strip"><span>' + STRIP + '</span><button class="ambient" type="button"></button></div>' +
       '<div class="pad">' +
         '<table class="sess"><tr><td>LOGIN</td><td class="c-t0">' + esc(viewer) + '</td></tr>' +
         '<tr><td>PASSWORD</td><td class="dots">••••••••</td></tr>' +
@@ -309,7 +310,7 @@
     var app = $('#app');
     var t = el('div', 'term');
     t.innerHTML =
-      '<div class="strip"><span>EREBOS ENGRAMME INTERFACE // NODE TRIOMPHE-7 // BUILD 3178.04</span><button class="ambient" type="button"></button></div>' +
+      '<div class="strip"><span>' + STRIP + '</span><button class="ambient" type="button"></button></div>' +
       '<div class="pad"><div class="log" id="nf-log"></div><div id="nf-req"></div>' +
       '<a class="back" href="' + ROOT + '">&lt;= RETOUR AU NODE</a></div>';
     app.appendChild(t);
