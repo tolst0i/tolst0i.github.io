@@ -12,7 +12,7 @@
   --dark:#5c7576;
   --red:#ff6a4a;
   --cyan:#6fd6e0;
-  --ui:Verdana,Tahoma,Geneva,sans-serif;
+  --ui:'Courier New',Courier,monospace;
   --mono:'Courier New',Courier,monospace;
   --cut:10px;
 }
