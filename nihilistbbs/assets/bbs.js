@@ -37,7 +37,6 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, skip ? 0 : ms); }); }
   function mkStore(kind) {
     return {
@@ -57,17 +56,6 @@
       .replace(/^-+|-+$/g, '');
   }
 
-  // post body: blank line = paragraph, newline = <br>, *x* = em, @handle = mention
-  function fmt(body) {
-    return String(body).split(/\n{2,}/).map(function (p) {
-      var h = esc(p)
-        .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
-        .replace(/(^|[\s(«])@([\w\-]+)/g, '$1<span class="at">@$2</span>')
-        .replace(/\n/g, '<br>');
-      return '<p>' + h + '</p>';
-    }).join('');
-  }
-
   // ---------- sound effects ----------
   var Sfx = (function () {
     var cache = {}, last = {};
@@ -85,7 +73,7 @@
       } catch (e) {}
     }
     function bind(root) {
-      $$('.btn, .foot a, .foot button', root).forEach(function (b) {
+      $$('.btn, .chk, .back', root).forEach(function (b) {
         if (b.dataset.sfx) return;
         b.dataset.sfx = '1';
         if (FINE) b.addEventListener('mouseenter', function () { play('select', 40, 0.35); });
@@ -101,9 +89,8 @@
     function on() { return sess.get('ambient') === 'on'; }
     function paint() {
       $$('[data-ambient]').forEach(function (b) {
-        var s = dead ? 'dead' : (on() ? 'on' : 'off');
-        b.dataset.state = s;
-        b.textContent = '[ AMBIENT : ' + { on: 'ON', off: 'OFF', dead: 'HORS LIGNE' }[s] + ' ]';
+        b.dataset.state = dead ? 'dead' : (on() ? 'on' : 'off');
+        var em = b.querySelector('em'); if (em) em.textContent = dead ? 'hors ligne' : '';
       });
     }
     function fade(to, ms, done) {
@@ -169,18 +156,14 @@
     return { mount: mount };
   })();
 
-  function footer(withBack) {
-    var f = el('div', 'foot');
+  function settings(withBack) {
+    var f = el('div', 'set');
     f.innerHTML =
-      (withBack ? '<a href="' + ROOT + '">&lt;= RETOUR AU NODE</a><span class="sep">·</span>' : '') +
-      '<button type="button" data-sfxtoggle></button><span class="sep">·</span>' +
-      '<button type="button" data-ambient></button>';
+      '<button type="button" class="chk" data-sfxtoggle><span>Effets sonores</span><i></i></button>' +
+      '<button type="button" class="chk" data-ambient><span>Ambiance<em></em></span><i></i></button>' +
+      (withBack ? '<a class="back" href="' + ROOT + '">&lt; Retour au node</a>' : '');
     var s = $('[data-sfxtoggle]', f);
-    function paint() {
-      var m = Sfx.muted();
-      s.dataset.state = m ? 'off' : 'on';
-      s.textContent = '[ SON : ' + (m ? 'OFF' : 'ON') + ' ]';
-    }
+    function paint() { s.dataset.state = Sfx.muted() ? 'off' : 'on'; }
     s.addEventListener('click', function () { pref.set('mute', Sfx.muted() ? '0' : '1'); paint(); });
     paint();
     return f;
@@ -224,14 +207,13 @@
   ];
 
   // ---------- request prompt ----------
-  function requestBlock(label) {
+  function requestBlock() {
     var f = el('form', 'req');
     f.setAttribute('autocomplete', 'off');
     f.innerHTML =
-      '<div class="req-l">' + esc(label || 'MOT-CLÉ DU CANAL') + '</div>' +
-      '<label class="req-in"><span>&gt;</span>' +
-      '<input name="q" type="text" spellcheck="false" autocapitalize="off" aria-label="Mot-clé du canal"></label><br>' +
-      '<button class="btn" type="submit">[ OUVRIR ]</button>' +
+      '<label class="opt"><span class="t">(Canal)</span>' +
+      '<input name="q" type="text" spellcheck="false" autocapitalize="off" placeholder="mot-clé" aria-label="Mot-clé du canal"></label>' +
+      '<div class="btns"><button class="btn" type="submit">Ouvrir</button></div>' +
       '<div class="log" aria-live="polite"></div>';
     var input = $('input', f), box = $('.log', f), busy = false;
     f.addEventListener('submit', function (e) {
@@ -256,29 +238,37 @@
     return f;
   }
 
-  function win(bar, inner) {
+  function win(head, sub, inner) {
     var w = el('div', 'win');
-    w.innerHTML = '<div class="bar">' + bar + '</div><div class="scr">' + inner + '</div>';
+    w.innerHTML = '<div class="in"><div class="head"><h1>' + head + '</h1>' +
+      (sub ? '<small>' + sub + '</small>' : '') + '</div>' + inner + '</div>';
     return w;
   }
 
+  var BANNER = [
+    ' _  _ ___ _  _ ___ _    ___ ___ _____ ',
+    '| \\| |_ _| || |_ _| |  |_ _/ __|_   _|',
+    '| .` || || __ || || |__ | |\\__ \\ | |  ',
+    '|_|\\_|___|_||_|___|____|___|___/ |_|  '
+  ].join('\n');
+
   // ---------- pages ----------
   function landing() {
-    var app = $('#app');
     var d = Math.floor(Date.now() / 86400000);
-    var w = win('NIHILISTBBS // TELNET-SHADOW',
-      '<div class="log" id="boot"></div>' +
-      '<hr class="rule">' +
-      '<div class="logo"><span class="l1">NIHILIST</span><span class="l2">BULLETIN BOARD SYSTEM</span></div>' +
-      '<div class="host">hôte <b>' + esc(HOST) + '</b></div>' +
-      '<hr class="rule">' +
-      '<p class="motd"><span class="lbl">QUOTE OF THE DAY</span>' + esc(QUOTES[d % QUOTES.length]) + '</p>' +
-      '<hr class="rule">' +
-      '<div id="req"></div>');
-    app.appendChild(w);
+    var w = win('NihilistBBS', esc(HOST) + ' // TELNET-SHADOW',
+      '<div class="body">' +
+        '<div class="log" id="boot"></div>' +
+        '<hr class="sep">' +
+        '<pre class="ascii">' + esc(BANNER) + '</pre>' +
+        '<div class="ascii-sub">BULLETIN BOARD SYSTEM</div>' +
+        '<hr class="sep">' +
+        '<div class="spk"><div class="nm">Quote of the day</div><p>' + esc(QUOTES[d % QUOTES.length]) + '</p></div>' +
+        '<div class="opts" id="req"></div>' +
+      '</div>');
+    $('#app').appendChild(w);
     var f = requestBlock();
     $('#req', w).appendChild(f);
-    $('.scr', w).appendChild(footer(false));
+    $('.body', w).appendChild(settings(false));
     Sfx.bind(w); Ambient.mount(); enableSkip();
     runLog($('#boot', w), HANDSHAKE.concat([{ t: 'en attente d\'un mot-clé', c: 'ok' }])).then(function () {
       $('#boot', w).lastChild.insertAdjacentHTML('beforeend', '<i class="caret"></i>');
@@ -286,63 +276,80 @@
     });
   }
 
+  function chatBody(body) {
+    return String(body).split(/\n{2,}/).map(function (p) {
+      return esc(p)
+        .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+        .replace(/(^|[\s(«])@([\w\-]+)/g, '$1<span class="at">@$2</span>')
+        .replace(/\n/g, '<br>');
+    }).join('<span class="pb"></span>');
+  }
+  function prefix(role) { return role === 'admin' ? '@' : role === 'press' ? '+' : ''; }
+
   function thread() {
-    var app = $('#app');
     var data;
     try { data = JSON.parse($('#thread').textContent); } catch (e) { data = null; }
     if (!data) {
-      app.appendChild(win('NIHILISTBBS', '<div class="log"><div class="ln err">canal corrompu</div></div>'));
+      $('#app').appendChild(win('NihilistBBS', '', '<div class="body"><div class="log"><div class="ln err">canal corrompu</div></div></div>'));
       return;
     }
     var slug = slugify(data.keyword || '');
     var viewer = data.viewer || 'anonymous';
     var posts = data.posts || [];
-    var first = posts[0], last = posts[posts.length - 1];
-    document.title = (data.keyword || 'Canal') + ' // NIHILISTBBS';
+    document.title = '#' + slug + ' // NIHILISTBBS';
 
-    var w = win('NIHILISTBBS // ' + esc(slug),
-      '<div class="kv">' +
-        '<div><b>LOGIN</b><span class="v">' + esc(viewer) + '</span></div>' +
-        '<div><b>PASSWORD</b><span class="dots">••••••••</span></div>' +
-        '<div><b>STATUS</b><span class="y">' + esc(data.status || 'READ-ONLY') + '</span></div>' +
+    var seen = {}, people = [];
+    posts.forEach(function (p) {
+      var k = String(p.author).toLowerCase();
+      if (!seen[k]) { seen[k] = 1; people.push(p); }
+    });
+    if (!seen[viewer.toLowerCase()]) people.push({ author: viewer });
+    var who = people.map(function (p) {
+      var c = p.role === 'admin' ? 'op' : p.role === 'press' ? 'vo' : '';
+      return '<span class="' + c + '">' + prefix(p.role) + esc(p.author) + '</span>';
+    }).join(' ');
+
+    var w = win('#' + esc(slug), esc(HOST),
+      '<div class="body">' +
+        '<div class="log" id="slog"></div>' +
       '</div>' +
-      '<div class="log" id="slog" style="margin-top:10px"></div>' +
       '<div id="tb" class="hidden">' +
-        '<hr class="rule">' +
-        '<h1 class="t-title">' + (data.tag ? '<span class="t-tag">[' + esc(data.tag) + ']</span>' : '') + esc(data.title || data.keyword) + '</h1>' +
-        '<div class="t-meta">' + posts.length + ' MSG' +
-          (first ? ' · ' + esc(first.date) : '') + (last && last !== first ? ' → ' + esc(last.date) : '') + '</div>' +
-        '<hr class="rule">' +
-        '<div class="board" tabindex="0" aria-label="Messages"></div>' +
-        '<hr class="rule">' +
-        '<div id="req"></div>' +
+        '<div class="topic"><b>Sujet :</b> ' + (data.tag ? '<span class="tg">(' + esc(data.tag) + ')</span> ' : '') +
+          '<span class="tt">' + esc(data.title || data.keyword) + '</span></div>' +
+        '<div class="who">Participants (' + people.length + ') : ' + who + '</div>' +
+        '<div class="chat" tabindex="0" aria-label="Messages"></div>' +
+        '<div class="body" id="foot"><div id="req"></div></div>' +
       '</div>');
-    app.appendChild(w);
+    $('#app').appendChild(w);
 
-    var board = $('.board', w);
+    var chat = $('.chat', w);
     var lv = viewer.toLowerCase();
-    var n = posts.length;
-    var nodes = posts.map(function (p, i) {
-      var cls = 'msg' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
-      var m = el('article', cls);
-      m.innerHTML =
-        '<div class="msg-n">MSG ' + pad(i + 1) + '/' + pad(n) + '</div>' +
-        '<div class="msg-m"><div><b>DE</b><span class="au">' + esc(p.author) + '</span>' +
-          (p.badge ? '<span class="badge">[' + esc(p.badge) + ']</span>' : '') + '</div>' +
-        '<div><b>DATE</b><span class="ts">' + esc(p.date || '') + '</span></div></div>' +
-        '<div class="msg-b">' + fmt(p.body || '') + '</div>';
-      return m;
+    var nodes = [], lastDay = null;
+    nodes.push(el('div', 'sys', '*** <b>' + esc(viewer) + '</b> a rejoint #' + esc(slug) + ' (lecture seule)'));
+    posts.forEach(function (p) {
+      var parts = String(p.date || '').split(/\s*·\s*/);
+      var day = parts[0] || '', time = parts[1] || '';
+      if (day && day !== lastDay) { nodes.push(el('div', 'sys day', '--- ' + esc(day) + ' ---')); lastDay = day; }
+      var cls = 'm' + (p.role ? ' r-' + p.role : '') + (String(p.author).toLowerCase() === lv ? ' is-viewer' : '');
+      nodes.push(el('p', cls,
+        '<span class="ts">[' + esc(time) + ']</span>' +
+        '<span class="nk">' + prefix(p.role) + esc(p.author) + '</span>' +
+        (p.badge ? '<span class="bd">(' + esc(p.badge) + ')</span>' : '') + ' ' +
+        '<span class="tx">' + chatBody(p.body || '') + '</span>'));
     });
 
-    $('#req', w).appendChild(requestBlock('NOUVELLE REQUÊTE'));
-    $('.scr', w).appendChild(footer(true));
+    $('#req', w).appendChild(requestBlock());
+    $('#foot', w).appendChild(settings(true));
     Sfx.bind(w); Ambient.mount(); enableSkip();
 
-    runLog($('#slog', w), HANDSHAKE.concat([{ t: 'canal « ' + slug + ' » ouvert', c: 'ok' }])).then(function () {
+    runLog($('#slog', w), [
+      'login ' + viewer + ' / ••••••••',
+      { t: data.status || 'read-only', c: 'warn' }
+    ].concat(HANDSHAKE, [{ t: 'canal #' + slug + ' ouvert', c: 'ok' }])).then(function () {
       $('#tb', w).classList.remove('hidden');
       var p = Promise.resolve();
       nodes.forEach(function (m) {
-        p = p.then(function () { m.classList.add('in'); board.appendChild(m); return wait(50); });
+        p = p.then(function () { m.classList.add('fx'); chat.appendChild(m); return wait(40); });
       });
     });
   }
@@ -351,11 +358,12 @@
     var parts = location.pathname.split('/').filter(Boolean);
     var i = parts.indexOf('nihilistbbs');
     var slug = parts[i + 1] ? decodeURIComponent(parts[i + 1]) : '';
-    var w = win('NIHILISTBBS // TELNET-SHADOW', '<div class="log" id="nlog"></div><hr class="rule"><div id="req"></div>');
+    var w = win('NihilistBBS', esc(HOST) + ' // TELNET-SHADOW',
+      '<div class="body"><div class="log" id="nlog"></div><div class="opts" id="req"></div></div>');
     $('#app').appendChild(w);
-    var f = requestBlock('NOUVELLE REQUÊTE');
+    var f = requestBlock();
     $('#req', w).appendChild(f);
-    $('.scr', w).appendChild(footer(true));
+    $('.body', w).appendChild(settings(true));
     Sfx.bind(w); Ambient.mount(); enableSkip();
     Sfx.play('alert', 900);
     runLog($('#nlog', w), [
