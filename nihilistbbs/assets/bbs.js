@@ -207,7 +207,7 @@
   ];
 
   // ---------- request prompt ----------
-  function requestBlock() {
+  function requestBlock(onArrive) {
     var f = el('form', 'req');
     f.setAttribute('autocomplete', 'off');
     f.innerHTML =
@@ -232,6 +232,8 @@
       var was = skip; skip = false;
       runLog(box, ['résolution « ' + slug + ' »', { t: 'connexion', c: 'ok' }], 120).then(function () {
         skip = was;
+        if (onArrive) return onArrive(slug);
+        sess.set('via', slug);
         location.href = ROOT + encodeURIComponent(slug) + '/';
       });
     });
@@ -252,8 +254,24 @@
     '|_|\\_|___|_||_|___|____|___|___/ |_|  '
   ].join('\n');
 
+  function autotype(input, text) {
+    return new Promise(function (res) {
+      var i = 0;
+      (function t() {
+        if (skip) { input.value = text; return res(); }
+        i++;
+        input.value = text.slice(0, i);
+        Sfx.play('select', 30, 0.18);
+        if (i >= text.length) return res();
+        setTimeout(t, 70 + Math.random() * 70);
+      })();
+    });
+  }
+
   // ---------- pages ----------
-  function landing() {
+  // opts.auto: keyword typed by itself, opts.done: called instead of navigating
+  function landing(opts) {
+    opts = opts || {};
     var d = Math.floor(Date.now() / 86400000);
     var w = win('NihilistBBS', esc(HOST) + ' // TELNET-SHADOW',
       '<div class="body">' +
@@ -266,13 +284,26 @@
         '<div class="opts" id="req"></div>' +
       '</div>');
     $('#app').appendChild(w);
-    var f = requestBlock();
+    var f = requestBlock(opts.done ? function () {
+      w.classList.add('out');
+      setTimeout(function () { w.remove(); opts.done(); }, REDUCED ? 0 : 300);
+    } : null);
     $('#req', w).appendChild(f);
     $('.body', w).appendChild(settings(false));
     Sfx.bind(w); Ambient.mount(); enableSkip();
     runLog($('#boot', w), HANDSHAKE.concat([{ t: 'en attente d\'une recherche', c: 'ok' }])).then(function () {
       $('#boot', w).lastChild.insertAdjacentHTML('beforeend', '<i class="caret"></i>');
-      $('input', f).focus({ preventScroll: true });
+      var input = $('input', f);
+      if (!opts.auto) { input.focus({ preventScroll: true }); return; }
+      var btn = $('.btn', f);
+      input.focus({ preventScroll: true });
+      wait(450).then(function () { return autotype(input, opts.auto); })
+        .then(function () { return wait(380); })
+        .then(function () { btn.classList.add('press'); Sfx.play('touch', 40); return wait(160); })
+        .then(function () {
+          btn.classList.remove('press');
+          if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true }));
+        });
     });
   }
 
@@ -297,6 +328,12 @@
     var title = data.title || data.keyword || '';
     var board = data.board || '';
     var n = posts.length;
+
+    // arrived through the search box: straight in. Otherwise replay the search first.
+    if (sess.get('via') === slug) { sess.set('via', ''); render(false); }
+    else landing({ auto: data.keyword || slug, done: function () { render(true); } });
+
+    function render(viaIntro) {
     document.title = title + ' // NIHILISTBBS';
 
     var crumbs = '<a href="' + ROOT + '">NihilistBBS</a>' +
@@ -339,15 +376,18 @@
     $('#foot', w).appendChild(settings(true));
     Sfx.bind(w); Ambient.mount(); enableSkip();
 
-    runLog($('#slog', w), [
-      'login ' + viewer + ' / ••••••••'
-    ].concat(HANDSHAKE, [{ t: 'sujet « ' + slug + ' » trouvé', c: 'ok' }])).then(function () {
+    skip = REDUCED;
+    var lines = ['login ' + viewer + ' / ••••••••'];
+    if (!viaIntro) lines = lines.concat(HANDSHAKE);
+    lines.push({ t: 'sujet « ' + slug + ' » trouvé', c: 'ok' });
+    runLog($('#slog', w), lines).then(function () {
       $('#tb', w).classList.remove('hidden');
       var p = Promise.resolve();
       nodes.forEach(function (m) {
         p = p.then(function () { m.classList.add('fx'); list.appendChild(m); return wait(40); });
       });
     });
+    }
   }
 
   function notfound() {
