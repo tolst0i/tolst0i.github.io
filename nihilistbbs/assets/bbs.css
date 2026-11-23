@@ -63,7 +63,7 @@ a{color:inherit}
   display:block;margin-top:6px;font:400 13px/1 var(--pix);color:var(--red-d);
   font-variation-settings:"BLED" 30,"SCAN" 0;letter-spacing:.3em;
 }
-@media (max-width:560px){.logo .l1{font-size:21px}}
+@media (max-width:560px){.logo .l1{font-size:21px}.logo .l2{font-size:9px;letter-spacing:.18em;line-height:1.5}}
 .host{margin-top:12px;color:var(--dim);font-size:12px;text-align:center}
 .host b{color:var(--cyan);font-weight:400}
 
